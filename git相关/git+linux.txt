@@ -1,0 +1,182 @@
+﻿linux：
+安装软件：进入对对应的软件位置，sudo apt-get install your_software
+
+将当前目录下所有文件改为可读写：chmod 777 .／＊
+
+提成权限到administor：su root
+
+只读文件进入可修改状态：i
+
+从可修改状态返回只读状态：esc
+修改文件后强制退出（不保存）：    ：！
+修改文件后强制保存退出：   ：wq！
+
+
+
+
+
+
+
+
+git工具：
+查看哪个接口占用了进程：netstat -nlpt
+
+删除占用接口的进程：kill -9 “进程id”	
+
+修改jockjs的引用：vim /home/www/config/java/touch-web.properties
+
+设置git的默认快捷键（进入个的文件：touchWeb）：vim .git/config
+
+
+关闭服务器：ctrl+c(在touchWeb文件下)
+
+启动服务器：mvn clean jetty:run(在touchWeb文件下)
+
+
+
+
+修改文件后提交：
+
+1.git add .
+
+2.git commit -m "note msg"
+
+3.git pull origin newgallery(把远程newgallery分支拉到本地)
+
+4.如果有冲突的话，看冲突：git st
+
+5.修改完成以后，继续rebase：
+	git add . 
+	git rebase --contine
+
+
+6.git push origin newgallery
+
+把远程分支拷贝到本地（本地没该分支）：
+	
+1.git co master
+
+	2.git remote update
+
+	3.git fetch origin newgallery:newgallery(需要新建本地分支:远程分支)
+	
+4.git co newgallery(切回本地分支)
+
+
+		git fetch：相当于是从远程获取最新版本到本地，不会自动merge
+
+		git pull：相当于是从远程获取最新版本并merge到本地(git fetch + git merge)
+		
+
+git fetch origin:获取远程所有分支到本地，不自动merge
+
+
+
+
+把本地分支和线上的master合并：
+1.更新本地master
+
+2.切换到自己的本地分支上
+
+3.git rebase master 
+
+4.git st
+
+5.解决冲突（
+	
+	5.1：把自己分支和master更新到最新
+	
+	5.2：git co “自己分支”
+	
+	5.3：git merge-base "自己分支" master
+	
+	5.4：git reset 上一部获取的分支id
+	
+	5.5：git add .
+	
+	5.6：git ci -am "note msg"
+	
+	5.7：git rebase master
+	
+	5.8：正常修复剩余冲突
+	
+	5.9：git add .
+	
+	5.10：git rebase --continue
+	
+	5.11：git push origin “个人分支名”
+）
+
+
+
+
+查看个人分支提交历史：git reflog
+
+查看所有人的提交记录：git log
+
+查看所有人的提交记录(含有可reset的id)：git lg
+
+返回之前提交的版本：git reset --hard
+
+退出rebase：git rebase --abort
+
+
+
+
+
+
+
+window下的git命令行窗口，git diff 后要按q来退出（q:quit）
+
+
+git branch 不带参数：列出本地已经存在的分支，并且在当前分支的前面加“*”号标记
+
+git branch -r 列出远程分支
+
+git branch -a 列出本地和远程分支
+
+git branch BranchName 创建新的 本地 Branch
+
+git branch -d Branchname 删除branch
+
+git branch -d -r Branchname 删除远程branch（例git branch -d -r origin/aa)
+
+
+查询某一行代码谁修改的：git blame 路径 | grep XXX
+
+如何跳过一步步解决冲突，直接跳到最后：
+	git merge-base 分支  master
+	git reser 上面的点
+	git add .
+	git rebase master
+
+
+
+fatal：Unpack error， check server log
+该错误是因为推上去的代码和之前某个版本的代码相同，所以报错不能提交，只能通过：git push --no-thin origin 分支名 来推送代码
+
+
+
+还原某一个文件：git checkout（简写为co） “文件路径”
+
+git commit --amend命令修改提交note后，如何退出vim编辑器：
+按Esc，输入:wq!
+
+
+git reflog：查看操作记录
+git reset head@{n}:可以回到n次操作前
+详见：http://www.cnblogs.com/mengdd/p/4153773.html
+
+
+
+
+
+
+
+
+git gc: 会把一些没有的文件和一些缓存的状态文件删除
+git revert 提交的id（即gitk中的SHA1 ID）：撤销之前的提交（不会影响后续的提交），如果有冲突，还是正常的解决冲突的办法（解决冲突 add commit push）
+
+
+git pull origin Matirx2.0
+冲突后

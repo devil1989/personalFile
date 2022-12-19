@@ -1,0 +1,1 @@
+D:\work\Flight.Mobile.FlightPostService,-build/*,-_build/*,-dest/*,-_mockup/*,-test/*,-coverage/*

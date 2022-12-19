@@ -1,0 +1,56 @@
+单个mongodb数据库安装
+1.去下载地址下载对应的版本，个人选择社区版：http://dl.mongodb.org/dl/win32/x86_64是资源地址：https://www.mongodb.com/try/download是官网推荐地址，用第二个选社区版【community】
+2.下载mongodb-compass这个软件是界面化操作，因为安装社区版的时候，会遇到下载mongodb-compass这个软件是否打勾，不要打，因为安装的时候同时下载mongodb-compass，会卡着不动，自己去找mongodb-compass下载安装
+3.安装一步步正常下来即可，最好指定一个空盘；安装完会自动出现各种文件夹；创建数据库路径（data目录）、日志路径（logs目录）和日志文件（mongo.log文件）
+4.创建配置文件mongo.conf，文件内容如下【最好放在和data文件夹统计目录】：
+	dbpath=D:\Software\mongoDb\data #数据库路径
+	logpath=D:\Software\mongoDb\logs\mongo.log #日志输出文件路径
+	logappend=true #错误日志采用追加模式
+	journal=true #启用日志文件，默认启用
+	quiet=true #这个选项可以过滤掉一些无用的日志信息，若需要调试使用请设置为false
+	port=27017 #端口号 默认为27017
+
+5.然后打开cmd，到对应的mongodb安装目录的bin目录里面，例如D:\Software\mongoDb\bin；执行 mongod  --config "D:\Software\mongoDb\mongo.conf" 调用这个配置文件
+
+6.然后浏览器输入：http://127.0.0.1:27017，就可以看到 It looks like you are trying to access MongoDB over HTTP on the native driver port，表示服务安装成功了
+
+7.在cmd命令行下“创建并启动MongoDB服务”，这个用于之后命令行快速启动mongodb：执行 mongod --config "G:\MongoDB\Server\4.4\mongod.conf"  --install --serviceName "mongodb"
+
+8.这样，下次只要在bin目录下打开命令行，执行net start mongdb  就可以启动服务，net stop mongdb 可以关闭服务；cmd下的net命令是windows命令，自己百度下有哪些
+
+9.用net start mongdb，再打开mongodb-compass，看链接地址没问题的话【//127.0.0.1:27017或localhost:27017】点击connect,就可以连接到服务器了，接下来就是这个界面的操作数据库
+
+10.mongodb-compass是在本地界面话操作数据库，但是node服务器那边也需要有操作数据库的框架：mongodb这个node模块是操作它的基础框架，在它之上还有个封装的node包，叫mongoose，更加方便，都用这个
+
+11.安装了mongoose，看下他的api，就知道如何操作数据库了，这个是通过js来操作，也就是日常后台操作数据库的逻辑
+
+
+
+
+
+
+
+如何设置集群：
+1.拷贝G:\MongoDB\Server下面的文件夹，这个是一整个mongodb的数据库相关文件夹【包含了数据库内容，配置，bin目录等】，拷贝3份，分别命名【例如命名为master，slave，arbiter】
+2.可以删除拷贝文件夹里面的bin文件夹【不知道有没有用，我是做了】
+3.三个文件夹内的配置文件【conf文件】，设置各自的dbpath和logpath，端口名称；并且统一添加replSet字段，它表示副本集名称，这三个都属于同一副本集，所以设置相同名称即可
+4.打开cmd，进入当前安装好的mongodb文件夹的bin目录下，例如之前安装bin文件夹目录是G:\MongoDB\Server\4.4\bin ，在里面给三个mongodb设置各自的服务名称，例如：
+	mongod --config "G:\MongoDB\Server\master\mongod.conf" --install --serviceName "master" --serviceDisplayName "master" 
+	mongod --config "G:\MongoDB\Server\slave\mongod.conf" --install --serviceName "slave" --serviceDisplayName "slave" 
+	mongod --config "G:\MongoDB\Server\arbiter\mongod.conf" --install --serviceName "arbiter" --serviceDisplayName "arbiter" 
+	//这里必须用到--serviceDisplayName "master" ，否则在net start master的时候，会提示服务名称无效
+	//一般设置master作为主库，slave作为从库，arbiter作为仲裁库
+
+5.第四步以后，就可以用net start master 和net start slave以及net start arbiter启动三个mongodb服务【net start mongodb】
+6.打开cmd 进入 G:\MongoDB\Server\4.4\bin【安装目录，里面有exe文件】，执行mongo --port 端口号【选择master slave arbiter任何一个库的端口号】，就进入这个库的shell脚本界面了
+7.最后一步，就是在这个shell环境中，把三个库连接成一个副本集，输入：new_config={"_id":"mySet",members:[{_id:0,host:"127.0.0.1:27017"},{_id:1,host:"127.0.0.1:27000"},{_id:2,host:"127.0.0.1:27001"},{_id:3,host:"127.0.0.1:27002"}]}
+  然后再输入rs.initiate(config_set)  就完成了三个库的关联，成为一个副本集
+ 输入rs.status()查看副本集状态，ctrl+c多按几次推出shell脚本界面
+ 返回的数据中可以看到有三个对象，每个对象的
+			health：1表示数据库正常，0表示异常
+			state：1表示主库，2表示从库
+ 关闭主库，就会自动把另外两个的从库中选出一个当主库，以保持数据库的正常运转；三个数据库可以部署在不同机器的不同端口上，所以集群多的情况下，基本不可能出现线上数据库服务器宕机的问题
+ 因为只要一个歇菜了，马上又其他副本顶上去。
+
+
+

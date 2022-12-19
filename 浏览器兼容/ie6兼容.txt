@@ -1,0 +1,34 @@
+ie6 jiajiechen 2015/01/21
+如何在ie6下做png24格式文件兼容
+background: url("./activity_bg.png") 0px 0px no-repeat;
+*background-image: none;
+*filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='./activity_bg.png'?>", sizingMethod='crop');
+
+
+max-width的ie6兼容：
+width: expression(this.width > 200 ? '200px': true); max-width: 200px;
+
+
+i标签无法正确设置高，不管display是什么《除非给它设置overflow：hidden
+
+ie6下透明图片千万不要组合：因为除了gif和png8图片，其他透明图片都无法透明，只有png24可以做滤镜兼容来达到效果，但是png图片不支持background-position
+
+复杂的hover效果，比如说a标签hover状态下的子标签样式改变，还是不要用css来控制，因为在ie6下不兼容
+
+ie6下position：fix的兼容
+#toolBar {
+    _position: absolute;
+    _left: expression(eval(document.documentElement.scrollLeft+document.documentElement.clientWidth-this.offsetWidth)-(parseInt(this.currentStyle.marginLeft,10)||0)-(parseInt(this.currentStyle.marginRight,10)||0));
+    _top: expression(eval(document.documentElement.scrollTop));
+}
+
+css中针对ie6的设置：
+.classA{
+	//_left完全是用js计算得出的
+	_left: expression(eval(document.documentElement.scrollLeft+document.documentElement.clientWidth-this.offsetWidth)-(parseInt(this.currentStyle.marginLeft,10)||0)-(parseInt(this.currentStyle.marginRight,10)||0));
+	_top: expression(eval(document.documentElement.scrollTop));    
+	_width:expression(eval(document.documentElement.clientWidth));//可以用js的表达式ocument.documentElement.clientWidth来求宽度
+}
+
+
+ie6下a的hover效果的前提是a标签有href属性，如果还是没有达到效果，试着在ie6下要把a:link,a:visited,a:hover,a:active写全

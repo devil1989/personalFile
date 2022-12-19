@@ -1,0 +1,76 @@
+express 或者 koa ：node框架，koa只是一个架子，很多功能靠插件实现，最新
+nodemon ：修改js文件以后，node自动重启
+//body-parser ：中间件，解析客户端请求的body中的内容，内部使用JSON编码处理,url编码处理以及对于文件的上传处理
+co-views ：对通用模板引擎渲染平台 consolidate 的封装，consolidate 应该算是 express.js 时代非常重要的一个库，它支持包括 ejs, mustache, swig 等各种模板渲染并提供统一的 api 调用方法。
+//cors ：服务端跨域解决方案，让浏览器发服务端请求支持跨域（需要服务端和浏览器同时支持，ie浏览器10以上才支持cors）
+html-minifier :html压缩
+node-uuid ：唯一标识符生成组件
+nunjucks：模板生成器
+superagent ：客户端请求代理模块，当你想处理get,post,put,delete,head请求时,你就应该想起该用它了
+supertest：单元测试
+//以下是koa相关插件#################
+koa-router：处理路由
+koa2-cors|koa-cors：跨域
+koa-bodyparser：body解析
+koa-compress：数据压缩（启用gzip压缩）
+koa-etag+koa-conditional-get：添加缓存功能
+koa-convert：让koa1的“中间件”可以用于koa2中 ：目前基本不需要了，koa1有的，koa2基本也全都有
+koa-helmet：设置一些安全性相关的HTTP头
+	Strict-Transport-Security：强制使用安全连接（SSL/TLS之上的HTTPS）来连接到服务器。
+	X-Frame-Options：提供对于“点击劫持”的保护。
+	X-XSS-Protection：开启大多现代浏览器内建的对于跨站脚本攻击（XSS）的过滤功能。
+	X-Content-Type-Options： 防止浏览器使用MIME-sniffing来确定响应的类型，转而使用明确的content-type来确定。
+	Content-Security-Policy：防止受到跨站脚本攻击以及其他跨站注入攻击。
+
+
+
+公司未使用的koa插件：
+koa-favicon：favicon图片的中间件（浏览器页面头部的icon）
+koa-send：控制静态文件访问
+koa-session：控制用户登录
+
+koa-request-log：记录请求日志
+koa-morgan：koa的HTTP请求记录器中间件
+koa-static：Koa静态文件服务中间件
+koa-views/koa-ejs：koa模板引擎，生成html字符串
+Mongoose：在node.js异步环境下对mongodb进行便捷操作的对象模型工具（MongoDB 是一个基于分布式文件存储的数据库）【node作为中间层，不用数据库，自然也用不到这个】
+
+
+node功能一览：
+	解析http请求 ：自带
+	路由 ：koa-router
+	解析html获取数据 ：koa-bodyparser
+	模板渲染 ：co-views，nunjucks
+	服务端启用gzip压缩数据:koa-compress
+	服务端数据缓存:koa-etag和koa-conditional-get同时使用
+	唯一标识符生成：node-uuid
+	服务端安全性设置（例如http头安全性设置）：koa-helmet
+	代理请求：koa2-proxy
+	跨域：koa2-cors
+	修改js后的服务器重启：nodemon
+	koa插件版本兼容：koa-convert
+
+	mock数据(mock数据库的表格)
+	单元测试:暂时不搞
+	数据库操作中间件
+	
+	针对xss，sql注入攻击等行为的安全防御
+	服务器数据监控
+	宕机如何处理新服务器指向
+	
+
+
+
+//脚手架
+Yeoman：Google的团队和外部贡献者团队合作开发的，他的目标是通过Grunt（一个用于开发任务自动化的命令行工具）和
+	Bower（一个HTML、CSS、Javascript和图片等前端资源的包管理器）的包装为开发者创建一个易用的工作流。
+
+
+"koa-bodyparser": "^2.2.0",
+    "koa-compress": "^1.0.9",
+    "koa-etag": "^2.1.1",
+    "koa-conditional-get": "^1.0.3",
+    "koa-helmet": "^2.0.0",
+    "koa-router": "^5.4.0",
+    "koa2-cors": "^2.8.1",
+    "koa2-proxy": "^1.1.7"

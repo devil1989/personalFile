@@ -1,0 +1,42 @@
+
+！！！！！！！！环境安装！！！！！！！
+chrome下node调试环境配置要求：使用方法见https://github.com/node-inspector/node-inspector
+
+1.chrome版本要55+
+
+2.node版本要7+：别用7以下的版本，会出各种问题，因为下载的node-inspector是最新的版本，和老版本的node结合使用，将是灾难；要么用老版本的node-inspector和node@6.10.0
+	           而且老版本的命令和新版本也不一样，要区分
+
+3.安装用：npm install -g node-inspector
+
+4.如果还不行，就是缺少软件包，全局安装 node-gyp和node-pre-gyp
+
+5.如果还不行，去https://dotnet.microsoft.com/download/visual-studio-sdks这个地址下载安装包4.6.2 ，然后再npm install --global --production windows-build-tools@4.0.0
+
+6.最后，一定要注意，使用的命令必须是node  --inspect-brk app.js【app.js是启动文件名，和package.json同目录下】
+  node-debug；node --debug等已经被废弃了，一旦使用就会报错，怎么解决都解决不了的
+
+
+
+
+
+本地调试任意js：特别注意，node7以上，node-debug，node --debug这些命令都不顶用了，只用 node --inspect-brk 
+1.node --inspect-brk app.js  【会出现监控地址和端口，例如127.0.0.1:8080，看cmd框中的内容即可】
+2.打开chrome://inspect/#devices，设置configure，添加刚才cmd中出现的地址，例如（127.0.0.1:8080），后面的uuid不用拷贝进去
+3.点击下面出现的inspect，就会自动到debugger的地方【有的时候不灵，多试几遍】
+
+//如何调试node页面
+1. 同上面一摸一样，先调试app.js,执行完app.js,这个时候服务器已经启动了
+2.前在对应的js处打断点即可，刷新对应的node页面，例如刷新，http://localhost:10129/recommend/list；就自动会进入node页面的后端执行流程，就能执行到断点处
+
+//如何调试webpack打包时各个插件的执行：
+加入scripts命令行："debug-webpack": "set NODE_ENV=production&&node --inspect-brk ./node_modules/webpack/bin/webpack.js --config ./build/webpack.config.dev.js",
+就是执行webpack的入口文件，webpack是从./node_modules/webpack/bin/webpack.js这个js文件开始打包的，后面的config是指定对应的webpack打包的config文件
+浏览器输入：chrome://inspect/#devices，会执行wepack的./build/webpack.config.dev.js文件，里面会执行所有的webpack插件，在对应的插件的node_modules里面的入口文件打断点，一般都是index
+
+
+
+
+
+
+

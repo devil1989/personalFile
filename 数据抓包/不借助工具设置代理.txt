@@ -1,0 +1,7 @@
+修改hosts文件（c盘:Window32\System32\driver\etc\hosts），在最底部添加
+
+127.0.0.1 m.ctrip.fat396.qa.nt.ctripcorp.com #fat 
+或者自己的ip m.ctrip.fat396.qa.nt.ctripcorp.com #fat
+
+127.0.0.1代表的是localhost的地址，所以浏览器输入m.ctrip.fat396.qa.nt.ctripcorp.com，访问的是127.0.0.1(即localhost)
+也可以用自己的ip，这样访问m.ctrip.fat396.qa.nt.ctripcorp.com的时候，实际是用自己ip的地址上的文件

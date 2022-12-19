@@ -1,0 +1,4 @@
+因为存在翻墙问题，所以上网下载安装会出错，解决办法如下
+
+1.打开https://www.google.cn/chrome/?standalone=1& platform=win64，下载离线安装包
+2.断开网络，安装离线包【联网下安装exe离线包还是会提示错误】

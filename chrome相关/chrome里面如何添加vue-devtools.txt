@@ -1,0 +1,14 @@
+如果可以跨域，直接去chrome商城添加，非常简单
+如果不能：
+	1.去https://github.com/vuejs/devtools下载vue-devtools的项目
+	2.npm install 项目根目录下的package.json，往往会出现报错，但因为本来就没有装node_modules,基本上不是package.json有问题，就是它里面对node的依赖有问题
+                3.切换到node8.10.0版本，然后再安装，如果有写插件不能安装，就一个个单独安装package.json里面的插件
+	4.如果没安装yarn的话，npm install来安装它，然后执行 yarn，会有打包
+	5.再执行npm run build，就能打包部分的文件了，但是还是会报错【主要是之前没安装好tailwindcss，它的安装方法有问题，需要线yarn打包】，这个时候重新去npm install tailwindcss就可以安装了
+	6.安装好tailwindcss以后，packages文件夹里面的shell-chrome文件夹，把它里面的manifest.json里面的persistent属性值从false改为true
+	7.执行npm run build的时候，往往会出现node版本和打包脚本冲突，需要nvm切换到6.10版本以上
+	8先到根路径执行npm run build完成以后再去shell-chrome下执行npm run build
+	9.然后在chrome的扩展程序里面点开“开发者模式”，然后点击左侧的“加载已解压的扩展包”，选择刚才的那个“shell-chrome文件夹”，就自动导入了vue-devtools插件了，可以在插件列表中看到
+                  注意：插件安装之前，chrome浏览的的快捷方式的属性里面最后要添加--enable-easy-off-store-extension-install，来支持外部包的安装  ；
+                           详情里面要把“允许访问文件网址”开关开启；
+                           开发环境下要用完整的vue包，而不是runtime运行时包，否则就没法在调试器的任务栏看到vue-devtool的标记“Vue”；

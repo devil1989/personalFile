@@ -1,0 +1,19 @@
+注意事项：要先在sln中把dest文件夹删除，然后编译，编译完成以后，要把文件包括到项目中，最后提交。
+1.全局安装grunt命令：npm install -g grunt-cli
+2.给项目装grunt：进入对应的文件夹（例如进入lizard2-0-demo.git\package）, 然后执行命令 npm install grunt
+然后再按照http://conf.ctripcorp.com/pages/viewpage.action?pageId=58578551的说明，就可以给文件打包了
+
+
+
+经常用到的path：D:\\tfs\\TaoCan\\MobileH5\\Release\\178_1209\\DIYFHXSDP\\v6.1\\WebApp
+
+
+
+grunt常用插件：
+  css压缩：grunt-contrib-mincss
+  js压缩：grunt-contrib-uglify
+  html压缩：grunt-contrib-htmlmin
+  多文件合并：grunt-contrib-concat
+  js语法检查：grunt-contrib-jshint
+  requirejs引用：grunt-requirejs（grunt中支持require语法）
+  图片压缩：grunt-contrib-imagemin

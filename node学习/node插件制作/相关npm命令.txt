@@ -1,0 +1,13 @@
+发布插件: npm publish <package>@<version>
+撤销发布：npm unpublish <package>@<version>
+更新插件版本: npm version patch 
+查看所有全局安装的模块: npm list -g【-g前面添加某个模块名称，就是查看某个全局模块的具体信息】
+查看本地某个模块具体信息【包括版本号，依赖模块版本号】:npm list grunt[grunt是模块名] 
+
+安装：npm install 插件名称
+卸载： npm uninstall 插件名称
+更新： npm update 插件名称
+新建模块：npm init 然后按照要求输入对应模块信息
+
+帮助命令【用于查看所有npm命令】：npm help
+npm cache clear可以清空NPM本地缓存，用于对付使用相同版本号发布新版本代码的人

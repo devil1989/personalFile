@@ -1,0 +1,22 @@
+http://www.iconfont.cn/ 
+账号：13818384061
+密码：Ctrip2015 
+
+使用说明：
+	1.进入我的项目
+	2.选择“机票无线H5-后服务”（退改签用的都是这个项目的icon-font）
+	3.点击下载至本地
+	4.解压后把文件放入对应的fonts文件夹（一般都是命名为fonts，也可以取其他名字）
+	5.在其他css中引用对应需要的文件
+		
+		例如：	@font-face {
+    				font-family: 'iconfont';
+    				src: url('../iconfont/iconfont.eot');
+    				src: url('../iconfont/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    				url('../iconfont/iconfont.woff') format('woff'), /* chrome、firefox */
+    				url('../iconfont/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+    				url('../iconfont/iconfont.svg#iconfont') format('svg');
+			}
+
+
+set NODE_ENV=dev&&

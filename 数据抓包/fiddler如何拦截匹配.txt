@@ -1,0 +1,17 @@
+fiddler原理：
+  fiddler可以把电脑上发送的请求拦截下来，换成相应匹配的url的，这个url可以设置成本地的文件，也可以是线上其他地址
+
+正则匹配：（把m.fat36上的文件用本地iis对应的文件替代）
+regex:^http://m.fat36.qa.nt.ctripcorp.com/html5/flight/(.+)$
+http://localhost/html5/flight/$1
+
+
+
+手机代理：
+	设置代理地址为自己电脑IP:端口，那么手机访问的时候，其实是让ip：端口作为代理访问，因为fiddler拦截的就是这个端口，所以fiddler就把手机上的所有请求都拦截下来了
+	这是时候，fiddler会更加fiddler的本地代理配置，找到代理配置的资源来返回，如果没有找打代理资源，会把原请求url返回的资源打包返回给请求发送方。
+
+
+
+
+D8537299F13DC54430967B036F3E9289

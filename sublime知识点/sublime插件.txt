@@ -1,0 +1,33 @@
+基础插件：https://packagecontrol.io/  这个插件用于安装其他插件
+
+node：很多插件，比如jshint是依赖与这个node插件的
+HTML-CSS-JS Prettify插件：html，css，js的格式化
+emmet：html标签简写，快速写html
+
+//最好别用，鼠标移上去就会自动显示链接，然后编辑器就卡住了
+cTags：点击js函数，跳转到对应的函数定义部分；
+	这个最复杂，不但需要在sublime中安装ctags，还需要下载http://prdownloads.sourceforge.net/ctags/ctags58.zip文件
+	文件随便解压到一个文件夹，然后需要在ctag自定义的setting-user中更改command的位置，把他设置成自己刚才放的那个文件夹的路径
+	还需要把Mouse  Binding -Default设置拷贝到Mouse  Binding -user中去
+	最后使用之前，还需要再Find>CTags>Rebuild Tags
+
+	注意：它只是通过相同的函数名称去找，如果有多个地方定义了同一个名字，就会把所有函数全部列出来
+                          有nodeModules的时候，用ctags来建立关联的时候，容易报错；而且建立关联的时候，时间也过长，所以别把nodeModules关联进去【关联之前先删了，关联好以后再从垃圾站恢复】
+
+
+
+
+
+chineseLocalizations:中文插件，让sublime编辑器变成中文
+All Autocomplete:代码智能自动完成插件[sublime4上使用，非常好的一款插件，其他自动补全插件有问题，这个用起来最舒服]
+
+
+
+
+JSHint和JSHint gutter：js语法校验；可以动态设置js的语法规则，可宽松可严格，这样有助于保持良好的代码习惯  【这个我还没做到，平时写语法都没有特别注意】
+SublimeLinter：校验器，可以校验js，也可以校验css，但是要配合其他插件，配合jsHint来校验js；配合cssLint来校验css，校验都是通过SublimeLinter来校验，知识它用了jsHint和cssLint插件
+IMESupport:让输入法光标和sublime中的输入符号位置对应【这个很影响性能，只要用微软自带的拼音输入法，就完全不存在这个问题了，也就不需要这个插件了】
+sass:识别scss等文件格式【sublime4貌似自动识别】
+
+个人偏好设置添加如下代码，删除凡人的鼠标移上去就提示文件出处的功能：超级占内存，总是卡死sublime
+"show_definitions": false

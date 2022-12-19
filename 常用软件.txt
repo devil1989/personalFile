@@ -1,0 +1,13 @@
+产品原型设计:Axure PR 
+项目管理：Microsoft Office Project 
+流程图：Microsoft Office Visio
+
+
+数据整理：Word、Excel
+数据演示：PowerPoint
+产品设计：firework,photoshop
+网页制作:dreamweaver
+测试工具:firebug,chrome
+同步工具：svn；git
+沟通工具：Lync
+邮件：outlook

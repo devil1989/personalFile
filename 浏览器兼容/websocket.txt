@@ -1,0 +1,11 @@
+IE            6 个
+chrome  256 个
+Firefox    200 个
+safari      1273 个（MAC 版本）
+
+ie需要修改注册表：注册表原来的最大值
+执行regedit打开注册表，然后找到Internet浏览器，注册表地址如下
+\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_MAXCONNECTIONSPER1_0SERVER //explore.exe最大4；iexplore.exe最大10 ：自己把它们扩大了30倍
+\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_MAXCONNECTIONSPERSERVER //explore.exe最大2；iexplore.exe最大10
+
+

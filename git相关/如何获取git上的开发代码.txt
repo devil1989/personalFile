@@ -1,0 +1,44 @@
+1. 安装 Git-1.9.4-preview20140929.exe
+	
+	标题显示：Welcome ... -> 点 Next
+	Information -> 点 Next
+	Select Components -> 全部不选 -> 点 Next
+	Adjusting -> 选第 2 个：... Git from the Windows Command Prompt -> 点 Next
+	Configuering -> 选第 1 个（默认）： Checkout Windows-Style... -> 点 Next
+	等待 3分35秒134毫秒
+	Completing -> 去掉勾 -> Finish
+
+2. 在开始菜单找到 Git GUI 并打开
+
+	Git GUI -> 点击帮助/Show SSH Key
+	Your OpenSSH -> 点击 Generate Key -> 不输入直接点击 Ok -> 不输入直接点击 Ok ->  点击 Copy To Clipboard
+	
+3. 打开 http://code.ctripcorp.com/
+
+	点击右上角 Sign In
+	输入域账号和密码登陆
+	回到主页后点击右上角 域账号 -> 点击 Settings
+	点击左边第 5 个（SSH Public Keys）
+	粘贴刚复制的 SSH Key -> 点击 Add Key
+	点击左边第 6 个（HTTP PASSWORD）
+	点击 Generate Password  
+	复制上个页面的用户名和密码。记住
+	
+4. 安装 TortoiseGit-preview-1.8.11.5-20141101-0da2511-64bit.msi
+
+	选第 2 个，使用 openSSH
+	接下来一路 Next 即可
+
+5. 打开开始菜单/GUI/Git Gui
+
+	点击克隆项目。
+	地址输入：ssh://code.ctripcorp.com:29418/Flight/Mobile/Flight.Mobile.H5
+	文件夹输入：文本需要存放代码的文件夹（如D:\work\H5，确保这个文件夹本身不存在）
+	输入确定，如果弹出确认框点击确定
+
+6. 右击 D:\work\ 空白处，Tori..Git -> Settings ->
+
+	ContextMenu -> 选中 Pull, Push
+	Alternative Editor -> 选择 Custom -> Notepad++ 或 Sublime
+	Git -> 输入域账号和邮箱
+	

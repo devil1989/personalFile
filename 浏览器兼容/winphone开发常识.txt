@@ -1,0 +1,23 @@
+1.	Ms事件
+            if (-1 != window.navigator.userAgent.indexOf("IEMobile")) {
+                if (window.navigator.pointerEnabled) {
+                    this.start = 'pointerdown';
+                    this.move = 'pointermove';
+                   this.end = 'pointerup';
+                } else if (window.navigator.msPointerEnabled) {
+                    this.start = 'MSPointerDown';
+                    this.move = 'MSPointerMove';
+                    this.end = 'MSPointerUp';
+                }
+            }
+2.
+Css 要加，不然touchmove不生效
+     -ms-touch-action: none;
+     touch-action: none;
+3.
+Pointer事件没有changedTouches，用clientX代替
+if (evt.changedTouches) {
+    sliderObj.startX = evt.changedTouches[0].pageX;
+} else {
+    sliderObj.startX = evt.clientX;
+}

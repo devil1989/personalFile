@@ -1,0 +1,5 @@
+taskkill /F /IM node.exe
+
+"predev":"taskkill /F /IM node.exe",
+
+ping localhost -n 5 > nul&taskkill /F /IM node.exe : 五秒以后杀死所有node进程

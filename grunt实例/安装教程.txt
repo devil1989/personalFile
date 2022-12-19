@@ -1,0 +1,11 @@
+1.先安装上面的nodejs，安装完以后就会自动装上了最新的npm
+2.按照http://www.gruntjs.net/getting-started上面的步骤一步步安装下去就好了，别设置什么环境变量，自己会设置
+
+
+
+意外：
+1.如果自己手贱，通过pm config get prefix修改了默认路径，那么只要重新设置
+npm config get prefix D:\Users\jiajiechen\AppData\Roaming\npm  （备注jiajiechen是个人用户）
+然后在个人用户的环境变量中设置NODE_PATH 为 D:\Users\jiajiechen\AppData\Roaming\npm
+
+2.按照http://www.gruntjs.net/getting-started上面的步骤一步步安装下去就好了，别设置什么环境变量，自己会设置

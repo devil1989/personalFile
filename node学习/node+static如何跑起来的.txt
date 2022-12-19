@@ -1,0 +1,24 @@
+首先启动node：启动node以后，node里面会指定对应的端口号：http.createServer(host).listen(PORT, HOST_ADDRESS);
+其中HOST_ADDRESS不用管，虽然是HOST_ADDRESS==0.0.0.0；但是访问的都是127.0.0.1这个虚拟的本地ip地址；
+127.0.0.1这个本地的虚拟ip地址，它默认等价于localhost，可以再host文件中给127.0.0.1重定向，
+例如127.0.0.1 local.class.hujiang.com,这样浏览器中输入local.class.hujiang.com，就等价于输入127.0.0.1
+注意，127.0.0.1这个虚拟ip地址就是本地服务器地址（localhost或者local.class.hujiang.com这种别名，可以理解成绑定到这个ip的域名）
+本地网卡有多个ip，127.0.0.1实虚拟ip，还有本机的ip（例如192.168.132.132）地址指的是真实的ip，别人可以通过这个ip来访问本机
+
+这样就能理解node启动服务，就是在127.0.0.1这个虚拟ip网络下，接下来的node的相对路径可以再node的rout中找到；例如127.0.0.1:6412/live/index.html （访问不了先看协议是http还是https，因为node本地启动一般只是http）
+Node所做的，只是在127.0.0.1:6412对应的路径下，生成了对应的html文件（里面包含了初始化数据），并没有生成127.0.0.1:8080路径下的js和css，图片等其他静态文件；
+但是Node生成的html文件中，包含了127.0.0.1:8080下所对应的js文件，例如html中包含http://localhost:8080/class/app/liveQuestion/bundle.js，那么这个文件资源哪来的呢
+这个就涉及到node和static前后端分离的问题了，node端仓库只产生html（包含后台返回数据）；所以在static仓库中，也需要启动一个服务，生成127.0.0.1:8080域名下的js，css等静态文件
+
+所以：
+	127.0.0.1:6412/live/index.html这个html资源，端口是6412，是node端产生的
+	localhost:8080/class/app/liveQuestion/bundle.js这个资源，端口是8080，是static端产生的
+	node端和static端是两码事，别混为一谈，node端是相应用户的html页面请求，做seo和从其他后端或者基础平台获取后台数据的，是个中间层，当然也可以直接从数据库获取数据
+
+
+但是node产生的html中包含了localhost:8080/class/app/liveQuestion/bundle.js这个js，所以就需要再static端中启动一个服务，来支持js的访问
+
+
+一般非node的后端站点，为了不依赖java或者php站点，在本地直接启动开发，可以用webpack-dev-server插件来本地模拟一个node实现热插拔，不依赖后端，并且直接把localhost：8080定位到一个文件夹，然后html和js通过相对路径即可访问：详见我的VueWeb代码仓库
+如果是node端站点，那么就要在static站点使用独立的热插拔插件（这个插件不用启动node的html页面访问服务，这个已经由node端实现了）
+

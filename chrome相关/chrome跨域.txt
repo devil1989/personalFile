@@ -1,0 +1,13 @@
+注意：其实--user-data-dir后面跟什么地址根本无所谓，会让chrome允许所有的跨域数据返回
+
+跨域：
+	1.本地开发的时候，本地chrome不允许发出跨域请求，在开始发请求的层就已经拦截了跨域请求，还没到服务器就已经被拦截了
+	2.虽然跨域请求被浏览器允许，发出去了，但是接受跨域请求的远程服务端不允许跨域，这个需要jsonp，iframe跨域等黑科技，在发请求这一端做处理，解决跨域问题
+	3.CROS跨域，这个不是客户端处理的，是服务端那边允许接受你发送的跨域请求，并且给予反馈数据
+      
+--disable-web-security --user-data-dir=C:\Users\chenjiajie\Desktop\chrome-cross
+
+--disable-web-security --user-data-dir=D:\work\class-kids-static\src\app\courseCenter_solutionDetail
+
+
+

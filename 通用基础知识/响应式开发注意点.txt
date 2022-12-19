@@ -1,0 +1,32 @@
+input元素的border不能设，设置以后会有阴影，暂时无法解决
+input元素会导致横竖屏转换的时候产生边际错位，需要给input元素添加-webkit-box-flex：1，然后给它的父元素添加，display：-webkit-box
+
+浏览器网速很慢，如果点击以后显示成功信息，然后马上离开，很有可能就看不到图片，因为加载图片在手机上比较慢
+
+1.后台格式解析为xml，这样就无法把请求发送到前端，尤其是在手机浏览器上
+2.location.host为兼容属性，但是location.origin不兼容
+
+3.css3:-webkit-box-flex
+
+4.html5:touchstart,touchmove,touchend事件（用于手机上网站开发）
+
+5.white-space:nowrap(建立布局中文本不换行)
+（解释：宽度自适应的情况下，不换行，这样就能解决对话框变小的时候，文本还是在同一行，而不是换行）
+（作用：用于手机上文字触摸滚动（自己会滚动，但是要设置overflow-x:scroll,并且设置该属性））
+
+
+6.要禁止手机的触屏滑动，让它固定在一个屏幕内，只需要把全屏高度的element（该元素不能使body）设置为屏幕的高度（J.page.viewHeight()）,然后添加overflow：hidden就好了。
+
+7.父元素如果是absolute定位，如何居中“块状”子元素：
+父元素：display：-webkit-box;
+	-webkit-box-align：center（子元素垂直居中）
+	-webkit-box-pack：center（子元素水平居中）
+子元素：display：block
+
+8.手机中，如果css中写了.classA img{....}，那么给某个元素A添加classA的时候，元素A下面的img如果有很多，就会影响性能（pc中不存在这种问题）
+
+9.z-index要能设置超大的值，会出现浏览器兼容问题，有的浏览器对超过某个筏值得z-index不支持,最好不要超过1000
+
+10.父元素下的子元素等分宽度：
+	父元素：display：-webkit-box
+	子元素：-webkit-box-flex：1；position：relative

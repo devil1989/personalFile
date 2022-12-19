@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://www.cnblogs.com/DragonStart/p/7675161.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Node JS 8 如何在浏览器上在线调试 - asml - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/bundle-watercolor-blue.css">
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/bundle-watercolor-blue-mobile.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/DragonStart/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/DragonStart/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/DragonStart/wlwmanifest.xml">
+<script async="" src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/analytics.js.下载"></script><script src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/jquery-2.2.0.min.js.下载"></script>
+<script type="text/javascript">var currentBlogApp = 'DragonStart', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/blog-common.js.下载" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<div id="maincontainer">
+	<div id="header">
+		
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/DragonStart/">blog of asml</a></h1>
+<div id="tagline"></div>
+<div id="menubar">
+<div id="blogstats"><div id="blog_stats">
+<span>posts(95)</span>
+<span>comments(21)</span>
+<span>trackbacks(0)</span>
+
+</div></div>
+<ul>
+	<li><a id="blog_nav_sitehome" class="home" href="http://www.cnblogs.com/">博客园</a></li>
+	<li><a id="blog_nav_contact" accesskey="9" class="contact" rel="nofollow" href="https://msg.cnblogs.com/send/asml">联系</a></li>
+	<li><a id="blog_nav_rss_image" href="http://www.cnblogs.com/DragonStart/rss"><img src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/xml.gif" alt="订阅"></a>&nbsp;<a id="blog_nav_rss" href="http://www.cnblogs.com/DragonStart/rss">订阅</a></li>
+	<li><a id="blog_nav_admin" class="admin" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul></div>
+
+
+
+
+	</div>
+	<div id="content">
+		<div id="left">
+			
+				
+<div class="container">
+	<div class="containerheader"><h3>公告</h3></div>
+	<div class="containercontent">
+		<div id="blog-news"><div id="profile_block">昵称：<a href="https://home.cnblogs.com/u/DragonStart/">asml</a><br>园龄：<a href="https://home.cnblogs.com/u/DragonStart/" title="入园时间：2012-12-19">5年5个月</a><br>粉丝：<a href="https://home.cnblogs.com/u/DragonStart/followers/">12</a><br>关注：<a href="https://home.cnblogs.com/u/DragonStart/followees/">2</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="follow(&#39;725ce979-ce49-e211-aa8f-842b2b196315&#39;)">+加关注</a></div><script>getFollowStatus('725ce979-ce49-e211-aa8f-842b2b196315')</script></div></div><script type="text/javascript">loadBlogNews();</script>
+	</div>
+</div>
+
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></div>
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></div>
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/DragonStart/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="http://www.cnblogs.com/DragonStart/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="http://www.cnblogs.com/DragonStart/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="http://www.cnblogs.com/DragonStart/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="http://www.cnblogs.com/DragonStart/tag/" title="我的博客的标签列表">我的标签</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+
+</div></div><div id="sidebar_toptags" class="sidebar-block">
+<h3 class="catListTitle">我的标签</h3>
+<div id="MyTag">
+<ul>
+<li><a href="http://www.cnblogs.com/DragonStart/tag/AOP%20C%23%20%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2/">AOP C# 面向切面</a>(1)</li><li><a href="http://www.cnblogs.com/DragonStart/tag/C%23/">C#</a>(1)</li><li><a href="http://www.cnblogs.com/DragonStart/tag/GPU/">GPU</a>(1)</li><li><a href="http://www.cnblogs.com/DragonStart/tag/opencl/">opencl</a>(1)</li><li><a href="http://www.cnblogs.com/DragonStart/tag/%E6%9F%A5%E7%9C%8B%20%E6%96%87%E4%BB%B6%20%E5%8D%A0%E7%94%A8/">查看 文件 占用</a>(1)</li><li><a href="http://www.cnblogs.com/DragonStart/tag/%E6%96%87%E4%BB%B6%E5%85%B3%E8%81%94%20%E6%B3%A8%E5%86%8C%E8%A1%A8/">文件关联 注册表</a>(1)</li><li><a href="http://www.cnblogs.com/DragonStart/tag/%E6%98%BE%E5%8D%A1/">显卡</a>(1)</li>
+</ul>
+</div></div><div id="sidebar_categories">
+		<div class="container">
+			<div class="containerheader"><h3>随笔分类</h3></div>
+			
+					<ul class="containercontent">
+				
+					<li><a id="CatList_LinkList_0_Link_0" href="https://www.cnblogs.com/DragonStart/category/1070211.html">C# ASP.NET(14)</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_1" href="https://www.cnblogs.com/DragonStart/category/1070284.html">dotnet core(3)</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_2" href="https://www.cnblogs.com/DragonStart/category/1027290.html">Linux操作(36)</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_3" href="https://www.cnblogs.com/DragonStart/category/1078553.html">NodeJS(2)</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_4" href="https://www.cnblogs.com/DragonStart/category/1102876.html">OpenCL(1)</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_5" href="https://www.cnblogs.com/DragonStart/category/1071996.html">OpenCV(2)</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_6" href="https://www.cnblogs.com/DragonStart/category/1050119.html">OrangePi(5)</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_7" href="https://www.cnblogs.com/DragonStart/category/1064067.html">Web开发(6)</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_8" href="https://www.cnblogs.com/DragonStart/category/1070278.html">Windows操作(9)</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_9" href="https://www.cnblogs.com/DragonStart/category/1076464.html">各种应用程序的安装与配置(27)</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_10" href="https://www.cnblogs.com/DragonStart/category/1047382.html">龙芯MIPS Linux板子应用笔记</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_11" href="https://www.cnblogs.com/DragonStart/category/1151766.html">数据库(2)</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_12" href="https://www.cnblogs.com/DragonStart/category/1080850.html">网络与接口与协议(3)</a></li>
+				
+					<li><a id="CatList_LinkList_0_Link_13" href="https://www.cnblogs.com/DragonStart/category/1207641.html">移动平台开发(1)</a></li>
+				
+					</ul>
+				
+			<div class="containerfooter"></div>
+		</div>		
+	
+		<div class="container">
+			<div class="containerheader"><h3>随笔档案</h3></div>
+			
+					<ul class="containercontent">
+				
+					<li><a id="CatList_LinkList_1_Link_0" href="https://www.cnblogs.com/DragonStart/archive/2018/06.html">2018年6月 (1)</a></li>
+				
+					<li><a id="CatList_LinkList_1_Link_1" href="https://www.cnblogs.com/DragonStart/archive/2018/04.html">2018年4月 (3)</a></li>
+				
+					<li><a id="CatList_LinkList_1_Link_2" href="https://www.cnblogs.com/DragonStart/archive/2018/03.html">2018年3月 (2)</a></li>
+				
+					<li><a id="CatList_LinkList_1_Link_3" href="https://www.cnblogs.com/DragonStart/archive/2018/02.html">2018年2月 (1)</a></li>
+				
+					<li><a id="CatList_LinkList_1_Link_4" href="https://www.cnblogs.com/DragonStart/archive/2018/01.html">2018年1月 (12)</a></li>
+				
+					<li><a id="CatList_LinkList_1_Link_5" href="https://www.cnblogs.com/DragonStart/archive/2017/12.html">2017年12月 (8)</a></li>
+				
+					<li><a id="CatList_LinkList_1_Link_6" href="https://www.cnblogs.com/DragonStart/archive/2017/11.html">2017年11月 (6)</a></li>
+				
+					<li><a id="CatList_LinkList_1_Link_7" href="https://www.cnblogs.com/DragonStart/archive/2017/10.html">2017年10月 (13)</a></li>
+				
+					<li><a id="CatList_LinkList_1_Link_8" href="https://www.cnblogs.com/DragonStart/archive/2017/09.html">2017年9月 (26)</a></li>
+				
+					<li><a id="CatList_LinkList_1_Link_9" href="https://www.cnblogs.com/DragonStart/archive/2017/08.html">2017年8月 (11)</a></li>
+				
+					<li><a id="CatList_LinkList_1_Link_10" href="https://www.cnblogs.com/DragonStart/archive/2017/07.html">2017年7月 (12)</a></li>
+				
+					</ul>
+				
+			<div class="containerfooter"></div>
+		</div>		
+	
+		<div class="container">
+			<div class="containerheader"><h3>文章分类</h3></div>
+			
+					<ul class="containercontent">
+				
+					<li><a id="CatList_LinkList_2_Link_0" href="https://www.cnblogs.com/DragonStart/category/1077174.html">Linux操作(3)</a></li>
+				
+					<li><a id="CatList_LinkList_2_Link_1" href="https://www.cnblogs.com/DragonStart/category/1107478.html">Web开发(4)</a></li>
+				
+					<li><a id="CatList_LinkList_2_Link_2" href="https://www.cnblogs.com/DragonStart/category/1076630.html">Windows操作(1)</a></li>
+				
+					<li><a id="CatList_LinkList_2_Link_3" href="https://www.cnblogs.com/DragonStart/category/1085114.html">看书笔记(1)</a></li>
+				
+					<li><a id="CatList_LinkList_2_Link_4" href="https://www.cnblogs.com/DragonStart/category/1093387.html">数据库操作(5)</a></li>
+				
+					<li><a id="CatList_LinkList_2_Link_5" href="https://www.cnblogs.com/DragonStart/category/1081192.html">游戏人生(2)</a></li>
+				
+					</ul>
+				
+			<div class="containerfooter"></div>
+		</div>		
+	
+		<div class="container">
+			<div class="containerheader"><h3>study</h3></div>
+			
+					<ul class="containercontent">
+				
+					<li><a id="CatList_LinkList_3_Link_0" href="https://www.archlinux.org/packages/community/x86_64/aarch64-linux-gnu-gcc/" rel="nofollow">aarchlinux</a></li>
+				
+					<li><a id="CatList_LinkList_3_Link_1" href="https://www.cloudflare.com/" rel="nofollow">CDN地址</a></li>
+				
+					<li><a id="CatList_LinkList_3_Link_2" href="http://notes.maxwi.com/2015/06/11/CUDA-study-notes/" rel="nofollow">CUDA教程</a></li>
+				
+					<li><a id="CatList_LinkList_3_Link_3" href="https://github.com/emgucv/emgucv" rel="nofollow">emgu cv github链接</a></li>
+				
+					<li><a id="CatList_LinkList_3_Link_4" href="ftp://alpha.gnu.org/pub/gnu/grub" rel="nofollow">GRUB源码</a></li>
+				
+					<li><a id="CatList_LinkList_3_Link_5" href="http://blog.csdn.net/mao0514/article/details/51218522" rel="nofollow">GRUB正确安装方式</a></li>
+				
+					<li><a id="CatList_LinkList_3_Link_6" href="http://ftp.arm.linux.org.uk/pub/armlinux/toolchain/" rel="nofollow">linux arm交叉编译工具</a></li>
+				
+					<li><a id="CatList_LinkList_3_Link_7" href="http://kernel.ubuntu.com/~kernel-ppa/mainline/" rel="nofollow">ubuntu kernel</a></li>
+				
+					<li><a id="CatList_LinkList_3_Link_8" href="http://blog.csdn.net/fantasylf/article/details/5634822" rel="nofollow">ubuntu 内核编译教程</a></li>
+				
+					<li><a id="CatList_LinkList_3_Link_9" href="http://blog.csdn.net/chinahaerbin/article/details/8783024" rel="nofollow">URL protocol</a></li>
+				
+					<li><a id="CatList_LinkList_3_Link_10" href="http://www.loongnix.org/index.php/Cross-compile" rel="nofollow">龙芯交叉编译器</a></li>
+				
+					<li><a id="CatList_LinkList_3_Link_11" href="https://blog.bennyling.cc/" rel="nofollow">某次元的教學blog</a></li>
+				
+					<li><a id="CatList_LinkList_3_Link_12" href="http://blog.csdn.net/qingdu007/article/details/51434172" rel="nofollow">修改Linux BASH的主机名和用户名</a></li>
+				
+					</ul>
+				
+			<div class="containerfooter"></div>
+		</div>		
+	</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="container">
+<div class="containerheader"><h3>最新评论
+	</h3></div>
+	<div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/DragonStart/p/8967368.html#3963762">1. Re:解决使用web开发手机网页关于分辨率被缩放的坑</a></li>
+        <li class="recent_comment_body">往死里打</li>
+        <li class="recent_comment_author">--柠檬青味</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/DragonStart/p/8967368.html#3963672">2. Re:解决使用web开发手机网页关于分辨率被缩放的坑</a></li>
+        <li class="recent_comment_body">往死里打</li>
+        <li class="recent_comment_author">--DiggingDeeply</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/DragonStart/p/8967368.html#3963634">3. Re:解决使用web开发手机网页关于分辨率被缩放的坑</a></li>
+        <li class="recent_comment_body">我得解决它,而且还是从前端方面解决</li>
+        <li class="recent_comment_author">--_York</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/DragonStart/p/8967368.html#3963589">4. Re:解决使用web开发手机网页关于分辨率被缩放的坑</a></li>
+        <li class="recent_comment_body">@民工也Coding嘿嘿,其实这是我们的娱乐方式之一...</li>
+        <li class="recent_comment_author">--asml</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/DragonStart/p/8967368.html#3963586">5. Re:解决使用web开发手机网页关于分辨率被缩放的坑</a></li>
+        <li class="recent_comment_body">要和谐 不要斗争啊<br><br>楼主大侠 技术不错！<br>但是想当cto 不光需要的是技术。。。</li>
+        <li class="recent_comment_author">--民工也Coding</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="container">
+<div class="containerheader"><h3>阅读排行榜</h3></div>
+	<div id="TopViewPostsBlock"><ul><li><a href="https://www.cnblogs.com/DragonStart/p/7731944.html">1. C#通过OpenCL调用显卡GPU做高效并行运算(2167)</a></li><li><a href="https://www.cnblogs.com/DragonStart/p/7751993.html">2. C# 使用OpenCV在一张图片里寻找人脸(2095)</a></li><li><a href="https://www.cnblogs.com/DragonStart/p/7843977.html">3. Visual Studio的调试技巧(1768)</a></li><li><a href="https://www.cnblogs.com/DragonStart/p/8241895.html">4. VS远程调试与附加调试(1671)</a></li><li><a href="https://www.cnblogs.com/DragonStart/p/7744202.html">5. C# AOP 面向切面编程之 调用拦截(1635)</a></li></ul></div>
+
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="container">
+<div class="containerheader">
+<h3>评论排行榜</h3>
+</div>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="https://www.cnblogs.com/DragonStart/p/8967368.html">1. 解决使用web开发手机网页关于分辨率被缩放的坑(6)</a></li><li><a href="https://www.cnblogs.com/DragonStart/p/7843977.html">2. Visual Studio的调试技巧(5)</a></li><li><a href="https://www.cnblogs.com/DragonStart/p/7731944.html">3. C#通过OpenCL调用显卡GPU做高效并行运算(4)</a></li><li><a href="https://www.cnblogs.com/DragonStart/p/7744202.html">4. C# AOP 面向切面编程之 调用拦截(3)</a></li><li><a href="https://www.cnblogs.com/DragonStart/p/7692102.html">5. 使用WinDBG调试查看C#内存转储文件(2)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div class="RecentComment">
+	<div id="TopDiggPostsBlock"><ul><li><a href="https://www.cnblogs.com/DragonStart/p/7751993.html">1. C# 使用OpenCV在一张图片里寻找人脸(20)</a></li><li><a href="https://www.cnblogs.com/DragonStart/p/7843977.html">2. Visual Studio的调试技巧(11)</a></li><li><a href="https://www.cnblogs.com/DragonStart/p/7692102.html">3. 使用WinDBG调试查看C#内存转储文件(6)</a></li><li><a href="https://www.cnblogs.com/DragonStart/p/7731944.html">4. C#通过OpenCL调用显卡GPU做高效并行运算(4)</a></li><li><a href="https://www.cnblogs.com/DragonStart/p/8967368.html">5. 解决使用web开发手机网页关于分辨率被缩放的坑(2)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+							
+		</div>
+		<div id="right">
+			
+<div id="post_detail">
+<div class="container">
+	<div class="containerheader"><h3>View Post</h3></div>
+	<div class="containercontent">
+	<div class="post">
+		<h2>
+			<a id="cb_post_title_url" href="https://www.cnblogs.com/DragonStart/p/7675161.html">Node JS 8 如何在浏览器上在线调试</a>
+		</h2>
+		<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown"><h1 id="为何专门针对node8写这个">0:为何专门针对Node8写这个</h1>
+<p>从nodejs8开始,node去掉了_debugger , 内部集成了inspect , 以往使用node-inspect实现的在线调试不再可用.node8开始要用新方法了.</p>
+<h1 id="在服务端用inspect模式运行nodejs">1:在服务端用inspect模式运行nodejs:</h1>
+<pre><code class="hljs nginx"><span class="hljs-attribute">node</span> --inspect-brk=<span class="hljs-number">0.0.0.0:8080</span> index.js</code></pre>
+<p><img src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/481370-20171015234300574-1854269557.png"></p>
+<h1 id="浏览器的操作">2:浏览器的操作</h1>
+<p>打开chrome浏览器 地址栏输入</p>
+<pre><code class="hljs dts"><span class="hljs-symbol">chrome:</span><span class="hljs-comment">//inspect</span></code></pre>
+<p>回车后会打开一个界面</p>
+<p><img src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/481370-20171015235204512-1140571750.png"><br>
+点congure按钮</p>
+<p>在弹出的界面中输入ip:port<br>
+<img src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/481370-20171015235322090-726304110.png"></p>
+<p>过一会就会显示调试文件了,点这里:<br>
+<img src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/481370-20171015235415355-1770832112.png"></p>
+<p>ok完成:<br>
+<img src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/481370-20171015235631590-1356887361.png"></p>
+<h1 id="另一种方法">3:另一种方法</h1>
+<p>安装<a href="https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj">NIM插件</a><br>
+如果前面的网页打不开,也没关系下面是下载版(可能是旧版):<br>
+<a href="https://pan.baidu.com/s/1kVmoBVD">链接</a> 密码: c45t</p>
+<p>题外话:我怎么得到下载版的? <a href="https://chrome-extension-downloader.com/">这个</a> 给我的</p>
+<p>打开浏览器的NIM:<br>
+<img src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/481370-20171015234555043-2050038932.png"></p>
+</div><div id="MySignature" style="display: block;">原创文章,转载请注明来源. http://www.cnblogs.com/DragonStart/</div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/DragonStart/category/1078553.html" target="_blank">NodeJS</a>,<a href="http://www.cnblogs.com/DragonStart/category/1064067.html" target="_blank">Web开发</a></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(7675161,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;725ce979-ce49-e211-aa8f-842b2b196315&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/DragonStart/" target="_blank"><img src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/sample_face.gif" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/DragonStart/">asml</a><br>
+            <a href="http://home.cnblogs.com/u/DragonStart/followees">关注 - 2</a><br>
+            <a href="http://home.cnblogs.com/u/DragonStart/followers">粉丝 - 12</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;725ce979-ce49-e211-aa8f-842b2b196315&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(7675161,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">0</span>
+    </div>
+    <div class="buryit" onclick="votePost(7675161,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+<script type="text/javascript">
+    currentDiggType = 0;
+</script></div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/DragonStart/p/7674889.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/DragonStart/p/7674889.html" title="发布于2017-10-15 23:21">Linux下用node-inspector实现NodeJS远程调试开发</a><br><a href="http://www.cnblogs.com/DragonStart/p/7675938.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/DragonStart/p/7675938.html" title="发布于2017-10-16 10:50">开关Windows休眠功能</a><br></div>
+</div>
+
+
+		<p class="postfoot">
+			posted on <span id="post-date">2017-10-15 23:57</span> <a href="http://www.cnblogs.com/DragonStart/">asml</a> 阅读(<span id="post_view_count">466</span>) 评论(<span id="post_comment_count">0</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=7675161" rel="nofollow">编辑</a> <a href="https://www.cnblogs.com/DragonStart/p/7675161.html#" onclick="AddToWz(7675161);return false;">收藏</a>
+		</p>
+	</div>
+	<script src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/highlight.min.js.下载"></script><script>markdown_highlight();</script><script type="text/javascript">var allowComments=true,cb_blogId=364409,cb_entryId=7675161,cb_blogApp=currentBlogApp,cb_blogUserGuid='725ce979-ce49-e211-aa8f-842b2b196315',cb_entryCreatedDate='2017/10/15 23:57:00';loadViewCount(cb_entryId);var cb_postType=1;</script>
+	
+	</div>
+</div>
+	</div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="https://www.cnblogs.com/DragonStart/p/7675161.html#" onclick="return RefreshPage();">刷新页面</a><a href="https://www.cnblogs.com/DragonStart/p/7675161.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】超50万VC++源码: 大型组态工控、电力仿真CAD与GIS源码库！</a><br><a href="http://clickc.admaster.com.cn/c/a105960,b2436453,c1705,i0,m101,8a1,8b2,h" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-DevCloud&#39;)">【推荐】华为云7大明星产品0元免费使用</a><br><a href="http://challenge.xfyun.cn/?ch=bk" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-xfyun&#39;)">【大赛】2018首届“顶天立地”AI开发者大赛</a><br></div>
+<div id="opt_under_post"></div>
+<div id="cnblogs_c1" class="c_ad_block"><a onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;C1&#39;);" href="https://cloud.tencent.com/product/tac?fromSource=gwzcw.945615.945615.945615" target="_blank"><img width="300" height="250" src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/24442-20180530101048589-14642248.jpg" alt="腾讯云0530"></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="https://news.cnblogs.com/n/598832/" target="_blank">黑洞内部时空不复存在？这个理论终被无情推翻</a><br> ·  <a href="https://news.cnblogs.com/n/598831/" target="_blank">Find X归来之前，了解Find的过去，看懂OPPO的未来</a><br> ·  <a href="https://news.cnblogs.com/n/598825/" target="_blank">性冷淡风的宜家居然进军电竞圈，要让你「吃鸡」一天都不累</a><br> ·  <a href="https://news.cnblogs.com/n/598824/" target="_blank">华为Watch 2 2018款轻体验：或是最接近Apple Watch的智能手表</a><br> ·  <a href="https://news.cnblogs.com/n/598823/" target="_blank">共享打印新概念，钉钉P1智能打印云盒评测</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="cnblogs_c2" class="c_ad_block"><a href="http://click.aliyun.com/m/34770/" target="_blank"><img src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/TB1gBPhgZLJ8KJjy0FnXXcFDpXa-468-60.jpg" alt="" style="width: 468px; height: 60px;"></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/553361/" target="_blank">程序员的那些反模式</a><br> ·  <a href="http://kb.cnblogs.com/page/598335/" target="_blank">程序员的宇宙时间线</a><br> ·  <a href="http://kb.cnblogs.com/page/597877/" target="_blank">突破程序员思维</a><br> ·  <a href="http://kb.cnblogs.com/page/597631/" target="_blank">云、雾和霭计算如何一起工作</a><br> ·  <a href="http://kb.cnblogs.com/page/576411/" target="_blank">你可以把编程当做一项托付终身的职业</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+		</div>
+	</div>	
+	<div class="clearing">&nbsp;</div>
+</div>
+<div id="footer">
+	
+Powered by:<br> 
+<a id="Footer1_Hyperlink1" name="Hyperlink1" href="http://scottwater.com/blog"><img src="./Node JS 8 如何在浏览器上在线调试 - asml - 博客园_files/100x30_Logo.gif" alt=""></a>
+
+<a id="Footer1_Hyperlink3" name="Hyperlink3" href="http://www.cnblogs.com/" style="font-family:Verdana;font-size:12px;">博客园</a><br>
+Copyright © asml
+
+</div>
+
+
+</body></html>

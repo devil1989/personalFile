@@ -1,0 +1,2 @@
+window下执行：set NODE_ENV=production&&npm run start
+mac或者linux下执行：NODE_ENV=dev npm run start[不用任何set或者export，只要用NODE_ENV=dev加空格即可]或者export NODE_ENV=dev &&npm run start

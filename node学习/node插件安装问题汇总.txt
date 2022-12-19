@@ -1,0 +1,31 @@
+//插件安装
+1.npm install插件安装下载一直没提示，可以按向下的箭头，有的时候其实安装了一部分了，知识卡住没显示出来，按向下的方向键箭头就可以显示了
+2.git的命令行窗口有时候会有权限或者其他问题，导致安装出问题，用cmd命令行【管理员权限打开】就可以安装；切换node版本也许哟啊cmd用管理员权限打开
+
+
+安装某个版本插件：用npm install 插件@版本
+
+
+//插件信息查询
+如何查看npm安装的路径 npm config ls
+
+如何查看node，npm 安装在哪里:where is node或where is npm
+
+如何查询某个插件的信息：比如查询webpack信息，用webpack -v;[只要安装了这个插件，就可以查看]； 如果要看详细信息，用npm info webpack
+
+
+
+
+//插件镜像
+使用淘宝，是因为很多镜像在国外，访问不到，或者访问缓慢，淘宝都有它们的镜像的拷贝，直接用淘宝的没有什么问题
+
+单次安装淘宝镜像上的某个插件：npm install 插件名 --registry=https://registry.npm.taobao.org
+一直用淘宝镜像： npm config set registry https://registry.npm.taobao.org
+
+用回原来的官网镜像：npm config set registry https://registry.npmjs.org
+
+不要轻易设置 npm config set registry https://registry.npm.taobao.org，这样会导致安装插件全部从淘宝镜像那边获取，而淘宝上关于很多低版本的node插件的镜像是没有的，所以安装插件会出问题
+原则上是，能从npm资源安装，就绝对不要用淘宝的插件，最近被全局设置淘宝插件坑惨了
+
+
+

@@ -1,0 +1,3 @@
+D:\work\mc-node,-node_modules/*  正则替换规则自己查一下
+
+D:\work\mc-node,-node_modules/*,-log/*,-mcnode_js/*,node_modules/@hujiang/*

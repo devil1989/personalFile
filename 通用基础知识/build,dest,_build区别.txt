@@ -1,0 +1,19 @@
+dest:压缩好的代码
+build：转义好但是未压缩的代码
+_build:转义好但是未压缩的代码
+
+build和_build一模一样，_build用于本地开发访问，build用于测试和线上环境访问（_build不会被提交，build才会）
+这样做是为了防止转义文件大面积冲突，本地tpack 的时候，路径是_build,它不会被提交，所以正常开开发不会冲突，
+但是tpack p的时候，会生成dest和build，所以每次发布提交的时候，dest和buid会大面积冲突，只要忽略这些冲突再次打包提交即可
+
+
+
+本地：
+	debug=1：走_build文件夹下路径
+	debug=0：走dest下路径
+
+测试或者线上：
+	debug=1：走build路径
+	debug=0：走dest路径
+
+所以这种结构下，修改本地js和html不管用，修改好以后得执行命令（tpack或者 tpack w），打到_build下即可

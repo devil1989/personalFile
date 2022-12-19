@@ -1,0 +1,22 @@
+现在本地的开发环境的H5项目看下报文，对比下，如果H5也有问题，就找后端
+H5没问题，本地有问题，那只能对比下本地Matrix项目的参数和URL和本地H5的参数区别
+
+
+如何把本地的服务地址修改成线上的服务地址：
+
+方法1：
+在Web.config中把
+<add key="h5.fplus.restfulAPIClient" value="http://gateway.m.fws.qa.nt.ctripcorp.com/restapi/soa2/10400" />修改为
+<add key="h5.fplus.restfulAPIClient" value="http:m.ctrip.com/restapi/soa2/10400" />
+
+方法2：
+在fbasemodel中修改buildurl的返回值，Lizard.restfullApi修改文对应的地址
+
+
+
+
+千万别用dst5389:经常出问题
+
+
+
+

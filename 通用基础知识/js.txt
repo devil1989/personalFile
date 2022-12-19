@@ -1,0 +1,52 @@
+JSON.parse("{'data':24}")和eval("("+"{'data':24}"+")")都能把字符串解析为JSON对象
+
+区别在于：
+1.eval能执行代码，而JSON.parse不可以。
+  例如：var num=10;
+  JSON.parse('{"data":‘+num+’}');//执行错误
+  eval("({data:"+num+"})")//可以执行
+
+2.JSON.parse对字符串有严格要求字符串最外面必须是单引号，里面属性是双引号。
+
+
+
+如何获取元素的内部消息：
+	1.ele.innerHTML:获取内部的html
+	2.ele.textContent：获取内部的text
+
+
+
+
+
+
+
+var scrollTop=window.pageYOffset || window.scrollY || document.documentElement.scrollTop;
+
+
+
+//事件
+
+function(e){
+	
+	var e=window.event||e;
+	//不能直接写event，因为在firefox中event这个值不存在，会报错，但是window.event
+	var target=e.target||e.srcElement;
+	
+	e.preventDefaule?e.preventDefaule():e.returnValue=false;
+	
+	e.stopPropagation?e.stopPropagation():e.cancleBubble=true;
+
+}
+
+
+
+$的比较耗时的方法：
+.show()
+.append()
+
+错误：new Date("2015-02-06 08:00:00")【safari和android系统浏览器】
+日期格式标准的是斜杠2015/02/06 08:00:00
+
+
+
+

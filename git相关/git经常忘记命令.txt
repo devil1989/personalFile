@@ -1,0 +1,22 @@
+跳过add直接提交：git ci -a -m "fix bug"
+撤销add：git reset .(文件路径表示撤销某个文件的add，点表示撤销所有的add)
+
+如何review代码：git push origin HEAD:refs/for/当前分支名     git push origin HEAD:refs/for/release
+
+
+
+如果想撤销上次提交记录中的某个文件：
+1.git reset HEAD^
+2.git co 对应的文件
+
+如果想撤销很久以前某次提交记录中的某个文件
+
+
+
+
+flightpostservice20170517
+
+
+window.$openMask = this;
+
+window.$openMask=null

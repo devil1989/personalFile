@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)https://www.cnblogs.com/chhyan-dream/p/12342020.html -->
+<html lang="zh-cn" style="--olcb-folder-code-block-max-height:80vh;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="origin-when-cross-origin">
+    <meta name="description" content="一、Sharding分片技术 1、分片概述 当数据量比较大的时候，我们需要把数分片运行在不同的机器中，以降低CPU、内存和Io的压力，Sharding就是数据库分片技术。 MongoDB分片技术类似M">
+    <meta property="og:description" content="一、Sharding分片技术 1、分片概述 当数据量比较大的时候，我们需要把数分片运行在不同的机器中，以降低CPU、内存和Io的压力，Sharding就是数据库分片技术。 MongoDB分片技术类似M">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="https://common.cnblogs.com/favicon.svg" type="image/svg+xml">
+    
+    <style>#home :not(.cnblogs_code):not(.cnblogs_Highlighter)>pre:not([highlighted]):not([class*="brush:"]) code:not(.hljs), :not(.cnblogs_code):not(.cnblogs_Highlighter)>pre:not([highlighted]):not([class*="brush:"]) code:not(.hljs) {background: rgb(245, 245, 245);
+        padding: 12px;
+        border: 1px solid rgb(204, 204, 204);
+        border-radius: 3px;
+        border-color: transparent;
+        color: rgb(68, 68, 68);
+        font-family: "Courier New", sans-serif;
+        font-size: 12px</style><link rel="stylesheet" href="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/blog-common.min.css">
+    <link id="MainCss" rel="stylesheet" href="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/bundle-simplememory.min.css">
+        <link id="highlighter-theme-cnblogs" type="text/css" rel="stylesheet" href="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/cnblogs.css">
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/bundle-simplememory-mobile.min.css">
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/chhyan-dream/rss">
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/chhyan-dream/rsd.xml">
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/chhyan-dream/wlwmanifest.xml">
+    <script type="text/javascript" async="" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/analytics.js.下载"></script><script>
+        var currentBlogId = 506332;
+        var currentBlogApp = 'chhyan-dream';
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'SimpleMemory';
+        var visitorUserId = '';
+        var hasCustomScript = false;
+        try {
+            if (hasCustomScript && document.referrer && document.referrer.indexOf('baidu.com') >= 0) {
+                Object.defineProperty(document, 'referrer', { value: '' });
+                Object.defineProperty(Document.prototype, 'referrer', { get: function(){ return ''; } });
+            }
+        } catch(error) { }
+        window.cb_enable_mathjax = false;
+        window.mathEngine = 0;
+        window.codeHighlightEngine = 1;
+        window.enableCodeLineNumber = false;
+        window.codeHighlightTheme = 'cnblogs';
+        window.darkModeCodeHighlightTheme = 'vs2015';
+        window.isDarkCodeHighlightTheme = false;
+        window.isDarkModeCodeHighlightThemeDark = true;
+        window.isDisableCodeHighlighter = false;
+        window.enableCodeThemeTypeFollowSystem = false;
+    </script>
+        <script>
+            var currentPostDateAdded = '2020-02-21 17:23';
+        </script>
+    <script src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/jquery-2.2.0.min.js.下载"></script>
+    <script src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/blog-common.min.js.下载"></script><style>.medium-zoom-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 300ms;
+  will-change: opacity;
+}
+
+.medium-zoom--opened .medium-zoom-overlay {
+  cursor: pointer;
+  cursor: zoom-out;
+  opacity: 1;
+}
+
+.medium-zoom-image {
+  cursor: pointer;
+  cursor: zoom-in;
+  /*
+    The `transition` is marked as "!important" for the animation to happen
+    even though it's overriden by another inline `transition` style attribute.
+
+    This is problematic with frameworks that generate inline styles on their
+    images (e.g. Gatsby).
+
+    See https://github.com/francoischalifour/medium-zoom/issues/110
+   */
+  transition: transform 300ms cubic-bezier(0.2, 0, 0.2, 1) !important;
+}
+
+.medium-zoom-image--hidden {
+  visibility: hidden;
+}
+
+.medium-zoom-image--opened {
+  position: relative;
+  cursor: pointer;
+  cursor: zoom-out;
+  will-change: transform;
+}
+</style><script id="hljs-script" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/highlight.min.js.下载" type="text/javascript" async=""></script>
+    
+<meta http-equiv="origin-trial" content="A+cA2PUOfIOKAdSDJOW5CP9ZlxONy1yu+hqAq72zUtKw4rLdihqRp6Nui/jUyCyegr+BUtH+C+Elv0ufn05yBQEAAACFeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiUHJpdmFjeVNhbmRib3hBZHNBUElzIiwiZXhwaXJ5IjoxNjY5NzY2Mzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="A+zsdH3aNZT/bkjT8U/o5ACzyaeNYzTvtoVmwf/KOilfv39pxY2AIsOwhQJv+YnXp98i3TqrQibIVtMWs5UHjgoAAACLeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiUHJpdmFjeVNhbmRib3hBZHNBUElzIiwiZXhwaXJ5IjoxNjY5NzY2Mzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="AxceVEhIegcDEHqLXFQ2+vPKqzCppoJYsRCZ/BdfVnbM/sUUF2BXV8lwNosyYjvoxnTh2FC8cOlAnA5uULr/zAUAAACLeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiUHJpdmFjeVNhbmRib3hBZHNBUElzIiwiZXhwaXJ5IjoxNjY5NzY2Mzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><script src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/pubads_impl_2022081501.js.下载" async=""></script><link rel="preload" href="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/f.txt" as="script"><script type="text/javascript" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/f.txt"></script></head>
+<body class="skin-simplememory has-navbar hljs-engine">
+<a name="top"></a>
+<div id="top_nav" class="navbar forpc">
+    <nav id="nav_main" class="navbar-main">
+        <ul id="nav_left" class="navbar-list navbar-left">
+            <li class="navbar-branding">
+                <a href="https://www.cnblogs.com/" title="开发者的网上家园" role="banner">
+                    <img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/logo.svg" alt="博客园Logo">
+                </a>
+            </li>
+            <li>
+                <a href="https://www.cnblogs.com/" onclick="countClicks(&#39;skin-navbar-sitehome&#39;)">首页</a>
+            </li>
+            <li>
+                <a href="https://news.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-news&#39;)">新闻</a>
+            </li>
+            <li>
+                <a href="https://q.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-q&#39;)">博问</a>
+            </li>
+            <li>
+                <a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-brands&#39;)">专区</a>
+            </li>
+            <li>
+                <a href="https://ing.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-ing&#39;)">闪存</a>
+            </li>
+            <li>
+                <a href="https://edu.cnblogs.com/" onclick="countClicks(&#39;nav&#39;, &#39;skin-navbar-edu&#39;)">班级</a>
+            </li>
+        </ul>
+        <ul id="nav_right" class="navbar-list navbar-right">
+            <li>
+                <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get" role="search">
+                    <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="search" tabindex="3">
+                    <button type="submit" id="zzk_search_button">
+                        <img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/search.svg" alt="搜索">
+                    </button>
+                </form>
+            </li>
+            <li id="navbar_login_status" class="navbar-list">
+                <a class="navbar-user-info navbar-blog" href="https://i.cnblogs.com/EditPosts.aspx?opt=1" alt="写随笔" title="写随笔" style="display: none;">
+                    <img id="new_post_icon" class="navbar-icon" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/newpost.svg" alt="写随笔">
+                </a>
+                <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客" style="display: none;">
+                    <img id="myblog_icon" class="navbar-icon" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/myblog.svg" alt="我的博客">
+                </a>
+                <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息" style="display: none;">
+                    <img id="msg_icon" class="navbar-icon" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/message.svg" alt="短消息">
+                    <span id="msg_count" style="display: none"></span>
+                </a>
+                <a id="navbar_lite_mode_indicator" data-current-page="blog" style="display: none" href="javascript:void(0)" alt="简洁模式" title="简洁模式启用，您在访问他人博客时会使用简洁款皮肤展示">
+                    <img class="navbar-icon" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/lite-mode-on.svg" alt="简洁模式">
+                </a>
+                <div id="user_info" class="navbar-user-info dropdown" style="display: none;">
+                    <a class="dropdown-button" href="https://home.cnblogs.com/">
+                        <img id="user_icon" class="navbar-avatar" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/avatar-default.svg" alt="用户头像">
+                    </a>
+                    <div class="dropdown-menu">
+                        <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                        <a href="https://home.cnblogs.com/">我的园子</a>
+                        <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                        <a href="javascript:void(0)" id="navbar_lite_mode_toggle" title="简洁模式会使用简洁款皮肤显示所有博客">
+    简洁模式 <img id="navbar_lite_mode_on" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/lite-mode-check.svg" class="hide"><span id="navbar_lite_mode_spinner" class="hide">...</span>
+</a>
+                        <a href="javascript:void(0)" onclick="account.logout();">退出登录</a>
+                    </div>
+                </div>
+                <a class="navbar-anonymous" href="https://account.cnblogs.com/signup" style="display: inline;">注册</a>
+                <a class="navbar-anonymous" href="javascript:void(0);" onclick="account.login()" style="display: inline;">登录</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/chhyan-dream/"><img id="blogLogo" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/logo.gif" alt="返回主页"></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/chhyan-dream/">虎啸千峰</a>
+</h1>
+<h2></h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/chhyan-dream/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/%E8%99%8E%E5%95%B8%E5%8D%83%E5%B3%B0">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/chhyan-dream/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			<span id="stats_post_count">随笔 - 95&nbsp; </span>
+<span id="stats_article_count">文章 - 0&nbsp; </span>
+<span id="stats-comment_count">评论 - 8&nbsp; </span>
+<span id="stats-total-view-count">阅读 - 
+<span title="总阅读数: 277048">
+27万</span></span>
+
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/chhyan-dream/p/12342020.html">
+    <span role="heading" aria-level="2">MongoDB分片技术原理和高可用集群配置方案</span>
+    
+</a><button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<h1>一、Sharding分片技术<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h1>
+<h2>&nbsp; 1、分片概述<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<p>&nbsp; 当数据量比较大的时候，我们需要把数分片运行在不同的机器中，以降低CPU、内存和Io的压力，Sharding就是数据库分片技术。</p>
+<p>&nbsp; MongoDB分片技术类似MySQL的水平切分和垂直切分，数据库主要由俩种方式做Sharding：垂直扩展和横向切分。</p>
+<p>&nbsp; 垂直扩展的方式就是进行集群扩展，添加更多的CPU，内存，磁盘空间等。</p>
+<p>&nbsp; 横向切分则是通过数据分片的方式，通过集群统一提供服务：</p>
+<p><img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/1270011-20200221150945569-481688502.png" alt="" class="medium-zoom-image"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1>&nbsp;二、MongoDB分片架构原理<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h1>
+<p>&nbsp; （1）MongoDB的Sharding架构</p>
+<p>&nbsp;&nbsp;<img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/1270011-20200221151228397-1391122119.png" alt="" class="medium-zoom-image"></p>
+<p>&nbsp;其中，Router负责接受访问，然后去config服务器中查询元数据，将数据存储信息返回给Router，Router服务器根据元数据的存储信息在分片服务器上读取或者写入数据。</p>
+<p>&nbsp;（2）MongoDB分片架构中的角色</p>
+<p>&nbsp;a、数据分片（Shards）</p>
+<p>&nbsp;用来保存数据，保证数据的高可用性和一致性。可以是一个单独的mongod实例，也可以是一个副本集。在生产环境下Shard一般是一个Replica Set，以防止该数据片的单点故障。所有Shard中有一个PrimaryShard，里面包含未进行划分的数据集合：</p>
+<p><img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/1270011-20200221152105805-1254181786.png" alt="" class="medium-zoom-image"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;b、查询路由（Query Routers）</p>
+<p>&nbsp; &nbsp;路由就是mongos的实例，客户端直接连接mongos，由mongos把读写请求路由到指定的Shard上去。</p>
+<p>&nbsp; 一个Sharding集群，可以有一个mongos，也可以有多个mongos以减轻客户端请求的压力。</p>
+<p>c、配置服务器（Config servers）</p>
+<p>&nbsp;保存集群的元数据（metadata），包含各个Shard的路由规则。</p>
+<p>Sharding分片技术（混合模式）高可用方案的架构图如下：</p>
+<p><img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/1270011-20200221152805833-1971483499.png" alt="" class="medium-zoom-image"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp;<strong>&nbsp;1）Sharding分片技术（混合模式）高可用架构下MongoDB数据写入流程</strong></p>
+<p><img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/1270011-20200221153122091-1946719537.png" alt="" class="medium-zoom-image"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp; 第一步：客户端访问路由服务器（Mongos），路由服务器接收到请求。</p>
+<p>&nbsp; 第二步：路由服务器将客户端访问配置服务器，配置服务器（Config）根据根据请求信息将数据信息写入到元数据中。</p>
+<p>&nbsp; 第三步：配置服务器将根据自身记录的元数据信息，指定数据存储位置，并将元数据信息（数据存储位置）返回给路由服务器。</p>
+<p>&nbsp; 第四步：路由服务器根据Config服务器返回的配置信息，将数据存储到mongod中（数据存储服务器）。存储服务器对数据进行备份和分片存储。</p>
+<p>&nbsp;2）高可用集群下从MongoDB读取数据流程</p>
+<p><img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/1270011-20200221154453305-1849265239.png" alt="" class="medium-zoom-image"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp; &nbsp;第一步：Mongos接受客户端请求，根据并判断请求是否合理（数据库地址是否正确，连接数是否超过最大）</p>
+<p>&nbsp; 第二步：路由服务器与客户端建立连接，并根据请求信息，去Config服务器中查询元数据信息。</p>
+<p>&nbsp;第三步：config服务器将数信息返回给路由服务器。</p>
+<p>&nbsp;第四步： config服务器根据元数据信息（数据存储位置），去MongoD服务器中，查询数据。</p>
+<p>&nbsp;第五步：数据服务器将数据查询结果返回给路由服务器。</p>
+<h1>三、Sharding分片高可用方案搭建过程<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h1>
+<h2>1、MongoDB机器信息<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<div class="table-wrapper"><table style="height: 133px; width: 454px" border="0">
+<tbody>
+<tr>
+<td>192.168.86.131</td>
+<td>192.168.86.132</td>
+<td>192.168.86.133</td>
+</tr>
+<tr>
+<td>mongos</td>
+<td>mongos</td>
+<td>mongos</td>
+</tr>
+<tr>
+<td>config server</td>
+<td>config server</td>
+<td>config server</td>
+</tr>
+<tr>
+<td>shard server1 主节点</td>
+<td>shard server1 副节点</td>
+<td>shard server1 仲裁</td>
+</tr>
+<tr>
+<td>shard server2 仲裁</td>
+<td>shard server2 主节点</td>
+<td>shard server2 副节点</td>
+</tr>
+<tr>
+<td>shard server3 副节点</td>
+<td>shard server3 仲裁</td>
+<td>shard server3 主节点</td>
+</tr>
+</tbody>
+</table></div>
+<h2>&nbsp;2、端口分配<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_396251" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">mongos：</code><code class="java value">20000</code></div><div class="line number2 index1 alt1"><code class="java plain">config：</code><code class="java value">21000</code></div><div class="line number3 index2 alt2"><code class="java plain">shard1：</code><code class="java value">27001</code></div><div class="line number4 index3 alt1"><code class="java plain">shard2：</code><code class="java value">27002</code></div><div class="line number5 index4 alt2"><code class="java plain">shard3：</code><code class="java value">27003</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<h2>3、下载并且安装<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_117906" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">wget https:</code><code class="java comments">//fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.0.9.tgz</code></div><div class="line number2 index1 alt1"><code class="java plain">tar -xzvf mongodb-linux-x86_64-amazon-</code><code class="java value">4.0</code><code class="java plain">.</code><code class="java value">9</code><code class="java plain">.tgz&nbsp; -C /usr/local/</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<h2>4、建立软连接并配置path信息<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_524683" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">cd /usr/local/</code></div><div class="line number2 index1 alt1"><code class="java plain">ln -s&nbsp; /usr/local/mongodb-linux-x86_64-amazon-</code><code class="java value">3.6</code><code class="java plain">.</code><code class="java value">2</code> <code class="java plain">/usr/local/mongodb</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>　进入到/etc/profile中配置MongoDB的全局变量信息</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_233709" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">vi /etc/profile</code></div><div class="line number2 index1 alt1"><code class="java plain"># MongoDB 环境变量内容</code></div><div class="line number3 index2 alt2"><code class="java plain">export MONGODB_HOME=/usr/local/mongodb</code></div><div class="line number4 index3 alt1"><code class="java plain">export PATH=$MONGODB_HOME/bin:$PATH</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>&nbsp;生效环境变量</p>
+<p>&nbsp;source&nbsp; /etc/profile</p>
+<h2>5、为服务器建立日志和数据目录<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<p>分别在每台机器建立conf、mongos、config、shard1、shard2、shard3六个目录，因为mongos不存储数据，只需要建立日志文件目录即可。</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_480689" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">mkdir -p /usr/local/mongodb/conf \</code></div><div class="line number2 index1 alt1"><code class="java plain">mkdir -p /usr/local/mongodb/mongos/log \</code></div><div class="line number3 index2 alt2"><code class="java plain">mkdir -p /usr/local/mongodb/config/data \</code></div><div class="line number4 index3 alt1"><code class="java plain">mkdir -p /usr/local/mongodb/config/log \</code></div><div class="line number5 index4 alt2"><code class="java plain">mkdir -p /usr/local/mongodb/shard1/data \</code></div><div class="line number6 index5 alt1"><code class="java plain">mkdir -p /usr/local/mongodb/shard1/log \</code></div><div class="line number7 index6 alt2"><code class="java plain">mkdir -p /usr/local/mongodb/shard2/data \</code></div><div class="line number8 index7 alt1"><code class="java plain">mkdir -p /usr/local/mongodb/shard2/log \</code></div><div class="line number9 index8 alt2"><code class="java plain">mkdir -p /usr/local/mongodb/shard3/data \</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<h2>6、config server配置服务器<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<p><strong>mongodb3.4版本</strong>以后要求配置服务器也创建副本集，不然集群搭建不成功。<br>(三台机器)添加配置文件</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_498347" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div><div class="line number15 index14 alt2">15</div><div class="line number16 index15 alt1">16</div><div class="line number17 index16 alt2">17</div><div class="line number18 index17 alt1">18</div><div class="line number19 index18 alt2">19</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">vi /usr/local/mongodb/conf/config.conf</code></div><div class="line number2 index1 alt1">&nbsp;</div><div class="line number3 index2 alt2"><code class="java plain">## 配置文件内容</code></div><div class="line number4 index3 alt1"><code class="java plain">pidfilepath = /usr/local/mongodb/config/log/configsrv.pid</code></div><div class="line number5 index4 alt2"><code class="java plain">dbpath = /usr/local/mongodb/config/data</code></div><div class="line number6 index5 alt1"><code class="java plain">logpath = /usr/local/mongodb/config/log/congigsrv.log</code></div><div class="line number7 index6 alt2"><code class="java plain">logappend = </code><code class="java keyword">true</code></div><div class="line number8 index7 alt1"><code class="java spaces">&nbsp;</code>&nbsp;</div><div class="line number9 index8 alt2"><code class="java plain">bind_ip = </code><code class="java value">0.0</code><code class="java plain">.</code><code class="java value">0.0</code></div><div class="line number10 index9 alt1"><code class="java plain">port = </code><code class="java value">21000</code></div><div class="line number11 index10 alt2"><code class="java plain">fork = </code><code class="java keyword">true</code></div><div class="line number12 index11 alt1"><code class="java spaces">&nbsp;</code>&nbsp;</div><div class="line number13 index12 alt2"><code class="java plain">#declare </code><code class="java keyword">this</code> <code class="java plain">is a config db of a cluster;</code></div><div class="line number14 index13 alt1"><code class="java plain">configsvr = </code><code class="java keyword">true</code></div><div class="line number15 index14 alt2">&nbsp;</div><div class="line number16 index15 alt1"><code class="java plain">#副本集名称</code></div><div class="line number17 index16 alt2"><code class="java plain">replSet = configs</code></div><div class="line number18 index17 alt1"><code class="java plain">#设置最大连接数</code></div><div class="line number19 index18 alt2"><code class="java plain">maxConns = </code><code class="java value">20000</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>启动三台服务器的config server</p>
+<p><strong><code class="  language-bash">mongod -f /usr/local/mongodb/conf/config.conf</code></strong></p>
+<p>登录任意一台配置服务器，初始化配置副本集<br>连接 MongoDB</p>
+<p><strong><code class="  language-undefined">mongo --port 21000</code></strong></p>
+<p>配置config变量</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_373042" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">config = {</code></div><div class="line number2 index1 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">_id : </code><code class="java string">"configs"</code><code class="java plain">,</code></div><div class="line number3 index2 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">members : [</code></div><div class="line number4 index3 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{_id : </code><code class="java value">0</code><code class="java plain">, host : </code><code class="java string">"192.168.86.131:21000"</code> <code class="java plain">},</code></div><div class="line number5 index4 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{_id : </code><code class="java value">1</code><code class="java plain">, host : </code><code class="java string">"192.168.86.132:21000"</code> <code class="java plain">},</code></div><div class="line number6 index5 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{_id : </code><code class="java value">2</code><code class="java plain">, host : </code><code class="java string">"192.168.86.133:21000"</code> <code class="java plain">}</code></div><div class="line number7 index6 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">]</code></div><div class="line number8 index7 alt1"><code class="java plain">}</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>　　初始化副本集</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_24367" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">rs.initiate(config)　</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<div>
+<div>&nbsp;</div>
+<div>&nbsp; 其中，"_id" : "configs"应与配置文件中配置的 replicaction.replSetName 一致，"members" 中的 "host" 为三个节点的 ip 和 port<br>
+响应内容如下</div>
+
+
+</div>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_261768" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div><div class="line number15 index14 alt2">15</div><div class="line number16 index15 alt1">16</div><div class="line number17 index16 alt2">17</div><div class="line number18 index17 alt1">18</div><div class="line number19 index18 alt2">19</div><div class="line number20 index19 alt1">20</div><div class="line number21 index20 alt2">21</div><div class="line number22 index21 alt1">22</div><div class="line number23 index22 alt2">23</div><div class="line number24 index23 alt1">24</div><div class="line number25 index24 alt2">25</div><div class="line number26 index25 alt1">26</div><div class="line number27 index26 alt2">27</div><div class="line number28 index27 alt1">28</div><div class="line number29 index28 alt2">29</div><div class="line number30 index29 alt1">30</div><div class="line number31 index30 alt2">31</div><div class="line number32 index31 alt1">32</div><div class="line number33 index32 alt2">33</div><div class="line number34 index33 alt1">34</div><div class="line number35 index34 alt2">35</div><div class="line number36 index35 alt1">36</div><div class="line number37 index36 alt2">37</div><div class="line number38 index37 alt1">38</div><div class="line number39 index38 alt2">39</div><div class="line number40 index39 alt1">40</div><div class="line number41 index40 alt2">41</div><div class="line number42 index41 alt1">42</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">&gt; config = {</code></div><div class="line number2 index1 alt1"><code class="java plain">... _id : </code><code class="java string">"configs"</code><code class="java plain">,</code></div><div class="line number3 index2 alt2"><code class="java plain">... members : [</code></div><div class="line number4 index3 alt1"><code class="java plain">... {_id : </code><code class="java value">0</code><code class="java plain">, host : </code><code class="java string">"192.168.86.131:21000"</code> <code class="java plain">},</code></div><div class="line number5 index4 alt2"><code class="java plain">... {_id : </code><code class="java value">1</code><code class="java plain">, host : </code><code class="java string">"192.168.86.132:21000"</code> <code class="java plain">},</code></div><div class="line number6 index5 alt1"><code class="java plain">... {_id : </code><code class="java value">2</code><code class="java plain">, host : </code><code class="java string">"192.168.86.133:21000"</code> <code class="java plain">}</code></div><div class="line number7 index6 alt2"><code class="java plain">... ]</code></div><div class="line number8 index7 alt1"><code class="java plain">... }</code></div><div class="line number9 index8 alt2"><code class="java plain">{</code></div><div class="line number10 index9 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java string">"configs"</code><code class="java plain">,</code></div><div class="line number11 index10 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"members"</code> <code class="java plain">: [</code></div><div class="line number12 index11 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{</code></div><div class="line number13 index12 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java value">0</code><code class="java plain">,</code></div><div class="line number14 index13 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"host"</code> <code class="java plain">: </code><code class="java string">"192.168.86.131:21000"</code></div><div class="line number15 index14 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">},</code></div><div class="line number16 index15 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{</code></div><div class="line number17 index16 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java value">1</code><code class="java plain">,</code></div><div class="line number18 index17 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"host"</code> <code class="java plain">: </code><code class="java string">"192.168.86.132:21000"</code></div><div class="line number19 index18 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">},</code></div><div class="line number20 index19 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{</code></div><div class="line number21 index20 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java value">2</code><code class="java plain">,</code></div><div class="line number22 index21 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"host"</code> <code class="java plain">: </code><code class="java string">"192.168.86.133:21000"</code></div><div class="line number23 index22 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">}</code></div><div class="line number24 index23 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">]</code></div><div class="line number25 index24 alt2"><code class="java plain">}</code></div><div class="line number26 index25 alt1"><code class="java plain">&gt; rs.initiate(config);</code></div><div class="line number27 index26 alt2"><code class="java plain">{</code></div><div class="line number28 index27 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"ok"</code> <code class="java plain">: </code><code class="java value">1</code><code class="java plain">,</code></div><div class="line number29 index28 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"operationTime"</code> <code class="java plain">: Timestamp(</code><code class="java value">1517369899</code><code class="java plain">, </code><code class="java value">1</code><code class="java plain">),</code></div><div class="line number30 index29 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"$gleStats"</code> <code class="java plain">: {</code></div><div class="line number31 index30 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"lastOpTime"</code> <code class="java plain">: Timestamp(</code><code class="java value">1517369899</code><code class="java plain">, </code><code class="java value">1</code><code class="java plain">),</code></div><div class="line number32 index31 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"electionId"</code> <code class="java plain">: ObjectId(</code><code class="java string">"000000000000000000000000"</code><code class="java plain">)</code></div><div class="line number33 index32 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">},</code></div><div class="line number34 index33 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"$clusterTime"</code> <code class="java plain">: {</code></div><div class="line number35 index34 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"clusterTime"</code> <code class="java plain">: Timestamp(</code><code class="java value">1517369899</code><code class="java plain">, </code><code class="java value">1</code><code class="java plain">),</code></div><div class="line number36 index35 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"signature"</code> <code class="java plain">: {</code></div><div class="line number37 index36 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"hash"</code> <code class="java plain">: BinData(</code><code class="java value">0</code><code class="java plain">,</code><code class="java string">"AAAAAAAAAAAAAAAAAAAAAAAAAAA="</code><code class="java plain">),</code></div><div class="line number38 index37 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"keyId"</code> <code class="java plain">: NumberLong(</code><code class="java value">0</code><code class="java plain">)</code></div><div class="line number39 index38 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">}</code></div><div class="line number40 index39 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">}</code></div><div class="line number41 index40 alt2"><code class="java plain">}</code></div><div class="line number42 index41 alt1"><code class="java plain">configs:SECONDARY&gt;</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>此时会发现终端上的输出已经有了变化。</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_981824" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java comments">//从单个一个</code></div><div class="line number2 index1 alt1"><code class="java plain">&gt;</code></div><div class="line number3 index2 alt2"><code class="java comments">//变成了</code></div><div class="line number4 index3 alt1"><code class="java plain">configs:SECONDARY&gt;</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>　查询状态</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_98591" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">configs:SECONDARY&gt; rs.status()</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<h2>7、配置分片服务器<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<h3>&nbsp; 7.1设置第一个分片服务器<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
+<p>(三台机器)设置第一个分片副本集<br>配置文件</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_924633" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div><div class="line number15 index14 alt2">15</div><div class="line number16 index15 alt1">16</div><div class="line number17 index16 alt2">17</div><div class="line number18 index17 alt1">18</div><div class="line number19 index18 alt2">19</div><div class="line number20 index19 alt1">20</div><div class="line number21 index20 alt2">21</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">vi /usr/local/mongodb/conf/shard1.conf</code></div><div class="line number2 index1 alt1">&nbsp;</div><div class="line number3 index2 alt2"><code class="java plain">#配置文件内容</code></div><div class="line number4 index3 alt1"><code class="java plain">#——————————————–</code></div><div class="line number5 index4 alt2"><code class="java plain">pidfilepath = /usr/local/mongodb/shard1/log/shard1.pid</code></div><div class="line number6 index5 alt1"><code class="java plain">dbpath = /usr/local/mongodb/shard1/data</code></div><div class="line number7 index6 alt2"><code class="java plain">logpath = /usr/local/mongodb/shard1/log/shard1.log</code></div><div class="line number8 index7 alt1"><code class="java plain">logappend = </code><code class="java keyword">true</code></div><div class="line number9 index8 alt2">&nbsp;</div><div class="line number10 index9 alt1"><code class="java plain">bind_ip = </code><code class="java value">0.0</code><code class="java plain">.</code><code class="java value">0.0</code></div><div class="line number11 index10 alt2"><code class="java plain">port = </code><code class="java value">27001</code></div><div class="line number12 index11 alt1"><code class="java plain">fork = </code><code class="java keyword">true</code></div><div class="line number13 index12 alt2"><code class="java spaces">&nbsp;</code>&nbsp;</div><div class="line number14 index13 alt1"><code class="java plain">#副本集名称</code></div><div class="line number15 index14 alt2"><code class="java plain">replSet = shard1</code></div><div class="line number16 index15 alt1"><code class="java spaces">&nbsp;</code>&nbsp;</div><div class="line number17 index16 alt2"><code class="java plain">#declare </code><code class="java keyword">this</code> <code class="java plain">is a shard db of a cluster;</code></div><div class="line number18 index17 alt1"><code class="java plain">shardsvr = </code><code class="java keyword">true</code></div><div class="line number19 index18 alt2"><code class="java spaces">&nbsp;</code>&nbsp;</div><div class="line number20 index19 alt1"><code class="java plain">#设置最大连接数</code></div><div class="line number21 index20 alt2"><code class="java plain">maxConns = </code><code class="java value">20000</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>　启动三台服务器的shard1 server　</p>
+<pre class="line-numbers language-bash highlighter-hljs" highlighted="true"><code class="language-bash highlighter-hljs hljs">mongod -f /usr/local/mongodb/conf/shard1.conf</code></pre>
+<p>登陆任意一台服务器，初始化副本集(除了192.168.86.133)，<strong>因为仲裁服务器没有访问权限，负责会初始化失败。</strong><br>连接 MongoDB</p>
+<p><code class="  language-undefined">&nbsp;mongo --port 27001</code></p>
+<p>使用admin数据库</p>
+<p><code class="  language-php"><span class="token keyword">&nbsp;use <span class="token package">admin</span></span></code></p>
+<p><span class="token keyword"><span class="token package">定义副本集配置</span></span></p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_956754" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">config = {</code></div><div class="line number2 index1 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">_id : </code><code class="java string">"shard1"</code><code class="java plain">,</code></div><div class="line number3 index2 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">members : [</code></div><div class="line number4 index3 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{_id : </code><code class="java value">0</code><code class="java plain">, host : </code><code class="java string">"192.168.86.131:27001"</code> <code class="java plain">},</code></div><div class="line number5 index4 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{_id : </code><code class="java value">1</code><code class="java plain">, host : </code><code class="java string">"192.168.86.132:27001"</code> <code class="java plain">},</code></div><div class="line number6 index5 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{_id : </code><code class="java value">2</code><code class="java plain">, host : </code><code class="java string">"192.168.86.133:27001"</code> <code class="java plain">, arbiterOnly: </code><code class="java keyword">true</code> <code class="java plain">}</code></div><div class="line number7 index6 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">]</code></div><div class="line number8 index7 alt1"><code class="java spaces">&nbsp;</code><code class="java plain">}</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>　初始化副本集配置</p>
+<pre class="line-numbers language-css highlighter-hljs" highlighted="true"><code class="language-css highlighter-hljs hljs">rs<span class="hljs-selector-class">.initiate</span>(config)
+
+响应内容如下
+</code></pre>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_742713" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div><div class="line number15 index14 alt2">15</div><div class="line number16 index15 alt1">16</div><div class="line number17 index16 alt2">17</div><div class="line number18 index17 alt1">18</div><div class="line number19 index18 alt2">19</div><div class="line number20 index19 alt1">20</div><div class="line number21 index20 alt2">21</div><div class="line number22 index21 alt1">22</div><div class="line number23 index22 alt2">23</div><div class="line number24 index23 alt1">24</div><div class="line number25 index24 alt2">25</div><div class="line number26 index25 alt1">26</div><div class="line number27 index26 alt2">27</div><div class="line number28 index27 alt1">28</div><div class="line number29 index28 alt2">29</div><div class="line number30 index29 alt1">30</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">&gt; use admin</code></div><div class="line number2 index1 alt1"><code class="java plain">switched to db admin</code></div><div class="line number3 index2 alt2"><code class="java plain">&gt; config = {</code></div><div class="line number4 index3 alt1"><code class="java plain">...&nbsp;&nbsp;&nbsp;&nbsp; _id : </code><code class="java string">"shard1"</code><code class="java plain">,</code></div><div class="line number5 index4 alt2"><code class="java plain">...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; members : [</code></div><div class="line number6 index5 alt1"><code class="java plain">...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {_id : </code><code class="java value">0</code><code class="java plain">, host : </code><code class="java string">"192.168.86.131:27001"</code> <code class="java plain">},</code></div><div class="line number7 index6 alt2"><code class="java plain">...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {_id : </code><code class="java value">1</code><code class="java plain">, host : </code><code class="java string">"192.168.86.132:27001"</code> <code class="java plain">},</code></div><div class="line number8 index7 alt1"><code class="java plain">...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {_id : </code><code class="java value">2</code><code class="java plain">, host : </code><code class="java string">"192.168.86.133:27001"</code> <code class="java plain">, arbiterOnly: </code><code class="java keyword">true</code> <code class="java plain">}</code></div><div class="line number9 index8 alt2"><code class="java plain">...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</code></div><div class="line number10 index9 alt1"><code class="java plain">...&nbsp; }</code></div><div class="line number11 index10 alt2"><code class="java plain">{</code></div><div class="line number12 index11 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java string">"shard1"</code><code class="java plain">,</code></div><div class="line number13 index12 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"members"</code> <code class="java plain">: [</code></div><div class="line number14 index13 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{</code></div><div class="line number15 index14 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java value">0</code><code class="java plain">,</code></div><div class="line number16 index15 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"host"</code> <code class="java plain">: </code><code class="java string">"192.168.86.131:27001"</code></div><div class="line number17 index16 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">},</code></div><div class="line number18 index17 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{</code></div><div class="line number19 index18 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java value">1</code><code class="java plain">,</code></div><div class="line number20 index19 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"host"</code> <code class="java plain">: </code><code class="java string">"192.168.86.132:27001"</code></div><div class="line number21 index20 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">},</code></div><div class="line number22 index21 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{</code></div><div class="line number23 index22 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java value">2</code><code class="java plain">,</code></div><div class="line number24 index23 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"host"</code> <code class="java plain">: </code><code class="java string">"192.168.86.133:27001"</code><code class="java plain">,</code></div><div class="line number25 index24 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"arbiterOnly"</code> <code class="java plain">: </code><code class="java keyword">true</code></div><div class="line number26 index25 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">}</code></div><div class="line number27 index26 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">]</code></div><div class="line number28 index27 alt1"><code class="java plain">}</code></div><div class="line number29 index28 alt2"><code class="java plain">&gt; rs.initiate(config)</code></div><div class="line number30 index29 alt1"><code class="java plain">{ </code><code class="java string">"ok"</code> <code class="java plain">: </code><code class="java value">1</code> <code class="java plain">}</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>　此时会发现终端上的输出已经有了变化。</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_764035" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java comments">//从单个一个</code></div><div class="line number2 index1 alt1"><code class="java plain">&gt;</code></div><div class="line number3 index2 alt2"><code class="java comments">//变成了</code></div><div class="line number4 index3 alt1"><code class="java plain">shard1:SECONDARY&gt;</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>查询状态</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_443443" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">shard1:SECONDARY&gt; rs.status()</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<h3>7.2设置第二和第三个分片服务器　<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
+<p>第二、第三个服务器配置过程同上，只需将配置文件中的服务器名称改为shard2、shard3，将端口改为27002,27003即可，仲裁服务器分别选择第二个和第三个。</p>
+<h2>8、配置路由服务器 mongos<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h2>
+<h3>&nbsp;8.1 配置并初始化<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
+<p>（三台机器）先启动配置服务器和分片服务器,后启动路由实例启动路由实例:</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_844524" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div><div class="line number15 index14 alt2">15</div><div class="line number16 index15 alt1">16</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">vi /usr/local/mongodb/conf/mongos.conf</code></div><div class="line number2 index1 alt1">&nbsp;</div><div class="line number3 index2 alt2"><code class="java plain">#内容</code></div><div class="line number4 index3 alt1"><code class="java plain">pidfilepath = /usr/local/mongodb/mongos/log/mongos.pid</code></div><div class="line number5 index4 alt2"><code class="java plain">logpath = /usr/local/mongodb/mongos/log/mongos.log</code></div><div class="line number6 index5 alt1"><code class="java plain">logappend = </code><code class="java keyword">true</code></div><div class="line number7 index6 alt2">&nbsp;</div><div class="line number8 index7 alt1"><code class="java plain">bind_ip = </code><code class="java value">0.0</code><code class="java plain">.</code><code class="java value">0.0</code></div><div class="line number9 index8 alt2"><code class="java plain">port = </code><code class="java value">20000</code></div><div class="line number10 index9 alt1"><code class="java plain">fork = </code><code class="java keyword">true</code></div><div class="line number11 index10 alt2">&nbsp;</div><div class="line number12 index11 alt1"><code class="java plain">#监听的配置服务器,只能有</code><code class="java value">1</code><code class="java plain">个或者</code><code class="java value">3</code><code class="java plain">个 configs为配置服务器的副本集名字</code></div><div class="line number13 index12 alt2"><code class="java plain">configdb = configs/</code><code class="java value">192.168</code><code class="java plain">.</code><code class="java value">86.131</code><code class="java plain">:</code><code class="java value">21000</code><code class="java plain">,</code><code class="java value">192.168</code><code class="java plain">.</code><code class="java value">86.132</code><code class="java plain">:</code><code class="java value">21000</code><code class="java plain">,</code><code class="java value">192.168</code><code class="java plain">.</code><code class="java value">86.133</code><code class="java plain">:</code><code class="java value">21000</code></div><div class="line number14 index13 alt1"><code class="java spaces">&nbsp;</code>&nbsp;</div><div class="line number15 index14 alt2"><code class="java plain">#设置最大连接数</code></div><div class="line number16 index15 alt1"><code class="java plain">maxConns = </code><code class="java value">20000</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>&nbsp;启动三台服务器的mongos server</p>
+<pre class="line-numbers  language-bash"><span style="font-size: 16px" highlighted="true"><code class="  language-bash">mongos -f /usr/local/mongodb/conf/mongos.conf</code></span></pre>
+<h3>8.2 串联路由服务器<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h3>
+<p>目前搭建了mongodb配置服务器、路由服务器，各个分片服务器，不过应用程序连接到mongos路由服务器并不能使用分片机制，还需要在程序里设置分片配置，让分片生效。<br>登陆任意一台mongos</p>
+<pre class="line-numbers language-undefined highlighter-hljs" highlighted="true"><code class="language-undefined highlighter-hljs hljs">mongo --port 20000
+
+使用admin数据库
+</code></pre>
+<pre class="line-numbers  language-php"><strong><span style="font-size: 16px" highlighted="true"><code class="  language-php"><span class="token keyword">use  <span class="token package">admin</span></span></code></span></strong></pre>
+<p>串联路由服务器与分配副本集</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_855937" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">sh.addShard(</code><code class="java string">"shard1/192.168.86.131:27001,192.168.86.132:27001,192.168.86.123:27001"</code><code class="java plain">);</code></div><div class="line number2 index1 alt1"><code class="java plain">sh.addShard(</code><code class="java string">"shard2/192.168.86.131:27002,192.168.86.132:27002,192.168.86.133:27002"</code><code class="java plain">);</code></div><div class="line number3 index2 alt2"><code class="java plain">sh.addShard(</code><code class="java string">"shard3/192.168.86.131:27003,192.168.86.132:27003,192.168.86.133:27003"</code><code class="java plain">);</code></div><div class="line number4 index3 alt1">&nbsp;</div><div class="line number5 index4 alt2"><code class="java plain">查看集群状态</code></div><div class="line number6 index5 alt1">&nbsp;</div><div class="line number7 index6 alt2"><code class="java plain">sh.status()</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>响应内容如下</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_349488" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div><div class="line number15 index14 alt2">15</div><div class="line number16 index15 alt1">16</div><div class="line number17 index16 alt2">17</div><div class="line number18 index17 alt1">18</div><div class="line number19 index18 alt2">19</div><div class="line number20 index19 alt1">20</div><div class="line number21 index20 alt2">21</div><div class="line number22 index21 alt1">22</div><div class="line number23 index22 alt2">23</div><div class="line number24 index23 alt1">24</div><div class="line number25 index24 alt2">25</div><div class="line number26 index25 alt1">26</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">mongos&gt; sh.status()</code></div><div class="line number2 index1 alt1"><code class="java plain">--- Sharding Status --- </code></div><div class="line number3 index2 alt2"><code class="java spaces">&nbsp;&nbsp;</code><code class="java plain">sharding version: {</code></div><div class="line number4 index3 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java value">1</code><code class="java plain">,</code></div><div class="line number5 index4 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"minCompatibleVersion"</code> <code class="java plain">: </code><code class="java value">5</code><code class="java plain">,</code></div><div class="line number6 index5 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"currentVersion"</code> <code class="java plain">: </code><code class="java value">6</code><code class="java plain">,</code></div><div class="line number7 index6 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"clusterId"</code> <code class="java plain">: ObjectId(</code><code class="java string">"5a713a37d56e076f3eb47acf"</code><code class="java plain">)</code></div><div class="line number8 index7 alt1"><code class="java spaces">&nbsp;&nbsp;</code><code class="java plain">}</code></div><div class="line number9 index8 alt2"><code class="java spaces">&nbsp;&nbsp;</code><code class="java plain">shards:</code></div><div class="line number10 index9 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{&nbsp; </code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java string">"shard1"</code><code class="java plain">,&nbsp; </code><code class="java string">"host"</code> <code class="java plain">: </code><code class="java string">"shard1/192.168.86.131:27001,192.168.86.132:27001"</code><code class="java plain">,&nbsp; </code><code class="java string">"state"</code> <code class="java plain">: </code><code class="java value">1</code> <code class="java plain">}</code></div><div class="line number11 index10 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{&nbsp; </code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java string">"shard2"</code><code class="java plain">,&nbsp; </code><code class="java string">"host"</code> <code class="java plain">: </code><code class="java string">"shard2/192.168.86.132:27002,192.168.86.133:27002"</code><code class="java plain">,&nbsp; </code><code class="java string">"state"</code> <code class="java plain">: </code><code class="java value">1</code> <code class="java plain">}</code></div><div class="line number12 index11 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{&nbsp; </code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java string">"shard3"</code><code class="java plain">,&nbsp; </code><code class="java string">"host"</code> <code class="java plain">: </code><code class="java string">"shard3/192.168.86.131:27003,192.168.86.133:27003"</code><code class="java plain">,&nbsp; </code><code class="java string">"state"</code> <code class="java plain">: </code><code class="java value">1</code> <code class="java plain">}</code></div><div class="line number13 index12 alt2"><code class="java spaces">&nbsp;&nbsp;</code><code class="java plain">active mongoses:</code></div><div class="line number14 index13 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java string">"4.0.9"</code> <code class="java plain">: </code><code class="java value">3</code></div><div class="line number15 index14 alt2"><code class="java spaces">&nbsp;&nbsp;</code><code class="java plain">autosplit:</code></div><div class="line number16 index15 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">Currently enabled: yes</code></div><div class="line number17 index16 alt2"><code class="java spaces">&nbsp;&nbsp;</code><code class="java plain">balancer:</code></div><div class="line number18 index17 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">Currently enabled:&nbsp; yes</code></div><div class="line number19 index18 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">Currently running:&nbsp; no</code></div><div class="line number20 index19 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">Failed balancer rounds in last </code><code class="java value">5</code> <code class="java plain">attempts:&nbsp; </code><code class="java value">0</code></div><div class="line number21 index20 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">Migration Results </code><code class="java keyword">for</code> <code class="java plain">the last </code><code class="java value">24</code> <code class="java plain">hours: </code></div><div class="line number22 index21 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">No recent migrations</code></div><div class="line number23 index22 alt2"><code class="java spaces">&nbsp;&nbsp;</code><code class="java plain">databases:</code></div><div class="line number24 index23 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">{&nbsp; </code><code class="java string">"_id"</code> <code class="java plain">: </code><code class="java string">"config"</code><code class="java plain">,&nbsp; </code><code class="java string">"primary"</code> <code class="java plain">: </code><code class="java string">"config"</code><code class="java plain">,&nbsp; </code><code class="java string">"partitioned"</code> <code class="java plain">: </code><code class="java keyword">true</code> <code class="java plain">}</code></div><div class="line number25 index24 alt2">&nbsp;</div><div class="line number26 index25 alt1"><code class="java plain">mongos&gt;</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<h1>四、启用集合分片<button class="cnblogs-toc-button" title="显示目录导航" aria-expanded="false"></button></h1>
+<p>&nbsp; 目前配置服务、路由服务、分片服务、副本集服务都已经串联起来了，但我们的目的是希望插入数据，数据能够自动分片。连接在mongos上，准备让指定的数据库、指定的集合分片生效。<br>登陆任意一台mongos</p>
+<pre class="line-numbers  language-undefined"><span style="font-size: 16px"><strong highlighted="true"><code class="  language-undefined">mongo --port 20000</code></strong></span></pre>
+<p>使用admin数据库</p>
+<pre class="line-numbers  language-php"><span style="font-size: 16px"><strong highlighted="true"><code class="  language-php"><span class="token keyword">use  <span class="token package">admin</span></span></code></strong></span></pre>
+<p>指定testdb分片生效，如下图：</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_100954" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">db.runCommand( { enablesharding :</code><code class="java string">"testdb"</code><code class="java plain">});</code></div><div class="line number2 index1 alt1">&nbsp;</div><div class="line number3 index2 alt2"><code class="java plain">或</code></div><div class="line number4 index3 alt1">&nbsp;</div><div class="line number5 index4 alt2"><code class="java plain">mongos&gt; sh.enablesharding(</code><code class="java string">"testdb"</code><code class="java plain">)</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>指定数据库里需要分片的集合和片键，哈希id分片（注意：分片的字段数据应该是变化的，不然分片不成功），如下图：　</p>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_863795" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">db.runCommand( { shardCollection : </code><code class="java string">"testdb.table1"</code><code class="java plain">,key : {</code><code class="java string">"name"</code><code class="java plain">: </code><code class="java string">"hashed"</code><code class="java plain">} } );</code></div><div class="line number2 index1 alt1">&nbsp;</div><div class="line number3 index2 alt2"><code class="java plain">或</code></div><div class="line number4 index3 alt1">&nbsp;</div><div class="line number5 index4 alt2"><code class="java plain">mongos&gt; sh.shardCollection(</code><code class="java string">"testdb.table1"</code><code class="java plain">, {</code><code class="java string">"name"</code><code class="java plain">: </code><code class="java string">"hashed"</code><code class="java plain">})</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>通过命令查看mongodb路由服务器上的shards集合会有数据展示，如下图：</p>
+<p><img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/1270011-20200221164429599-951794904.png" alt=""></p>
+<p>通过命令查看mongodb路由服务器上的chunks集合会有数据展示，如下图</p>
+<p><img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/1270011-20200221164609839-699959563.png" alt="" class="medium-zoom-image"></p>
+<div>
+<div>我们设置testdb的 table3 表需要分片，根据 id 或name自动分片到 shard1 ，shard2，shard3 上面去。要这样设置是因为不是所有mongodb 的数据库和表 都需要分片！<br>
+测试分片配置结果<br>切换到 testdb 数据库</div>
+<div>
+<pre class="line-numbers language-php highlighter-hljs" highlighted="true"><code class="language-php highlighter-hljs hljs"><span class="hljs-keyword">use</span>  <span class="hljs-title">testdb</span>;
+</code></pre>
+</div>
+插入测试数据</div>
+<div>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_101560" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java keyword">for</code><code class="java plain">(i=</code><code class="java value">1</code><code class="java plain">;i&lt;=</code><code class="java value">100000</code><code class="java plain">;i++){db.table3.insert({</code><code class="java string">"id"</code><code class="java plain">:i,</code><code class="java string">"name"</code><code class="java plain">:</code><code class="java string">"penglei"</code><code class="java plain">})};</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>总条数　</p>
+</div>
+<div>
+<div class="cnblogs_Highlighter sh-gutter">
+<div><div id="highlighter_551319" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java plain">db.table1.aggregate([{$group : {_id : </code><code class="java string">"$name"</code><code class="java plain">, totle : {$sum : </code><code class="java value">1</code><code class="java plain">}}}])</code></div></div></td></tr></tbody></table></div></div>
+</div>
+<p>查看分片情况如下</p>
+<p><img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/1270011-20200221164950876-1273234392.png" alt="" width="519" height="179" class="medium-zoom-image"></p>
+<p>&nbsp;<img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/1270011-20200221165021486-1782523818.png" alt="" width="516" height="181" class="medium-zoom-image"></p>
+<p>&nbsp;<img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/1270011-20200221165042837-1229780758.png" alt="" width="517" height="168" class="medium-zoom-image"></p>
+<p>&nbsp; 结论数据基本均匀</p>
+</div>
+<div>分组查看总数量是：100000</div>
+<div><img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/1270011-20200221165158395-1583380785.png" alt="" class="medium-zoom-image"></div>
+</div>
+<div class="clear"></div>
+<div id="blog_post_info_block" role="contentinfo"><div id="BlogPostCategory">
+    分类: 
+            <a href="https://www.cnblogs.com/chhyan-dream/category/1651939.html" target="_blank">MongoDB</a></div>
+
+
+    <div id="blog_post_info">
+<div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(12342020,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+        <a id="green_channel_follow" onclick="follow(&#39;c5af6347-a04e-4790-54ee-08d4ef52ecb6&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/chhyan-dream/" target="_blank"><img src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/sample_face.gif" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/chhyan-dream/">虎啸千峰</a><br>
+            <a href="https://home.cnblogs.com/u/chhyan-dream/followers/">粉丝 - <span class="follower-count">10</span></a>
+            <a href="https://home.cnblogs.com/u/chhyan-dream/followees/">关注 - <span class="following-count">4</span></a><br>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow" class="follow-tip">
+                <a href="javascript:void(0);" onclick="follow(&#39;c5af6347-a04e-4790-54ee-08d4ef52ecb6&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(12342020,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">0</span>
+    </div>
+    <div class="buryit" onclick="votePost(12342020,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+
+<script type="text/javascript">
+    currentDiggType = 0;
+</script></div>
+    <div class="clear"></div>
+    <div id="post_next_prev">
+
+    <a href="https://www.cnblogs.com/chhyan-dream/p/12302962.html" class="p_n_p_prefix">« </a> 上一篇：    <a href="https://www.cnblogs.com/chhyan-dream/p/12302962.html" data-featured-image="" title="发布于 2020-02-13 11:49">Hive事务原理和Datax同步事务表问题解决</a>
+    <br>
+    <a href="https://www.cnblogs.com/chhyan-dream/p/12355982.html" class="p_n_p_prefix">» </a> 下一篇：    <a href="https://www.cnblogs.com/chhyan-dream/p/12355982.html" data-featured-image="" title="发布于 2020-02-24 10:52">内网其他服务器节点连接Mysql数据库很慢的解决方案</a>
+
+</div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2020-02-21 17:23</span>&nbsp;
+<a href="https://www.cnblogs.com/chhyan-dream/">虎啸千峰</a>&nbsp;
+阅读(<span id="post_view_count">3170</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=12342020" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(12342020);return false;">收藏</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: &#39;&#39;, targetType: &#39;blogPost&#39;, targetId: &#39;12342020&#39;, targetLink: &#39;https://www.cnblogs.com/chhyan-dream/p/12342020.html&#39;, title: &#39;MongoDB分片技术原理和高可用集群配置方案&#39; })">举报</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+
+<script>
+    var cb_entryId = 12342020, cb_entryCreatedDate = '2020-02-21 17:23', cb_postType = 1, cb_postTitle = 'MongoDB分片技术原理和高可用集群配置方案';
+    var allowComments = true, cb_blogId = 506332, cb_blogApp = 'chhyan-dream', cb_blogUserGuid = 'c5af6347-a04e-4790-54ee-08d4ef52ecb6';
+    mermaidRender.render()
+    markdown_highlight()
+    zoomManager.apply("#cnblogs_post_body img:not(.code_img_closed):not(.code_img_opened)");
+    updatePostStats(
+            [cb_entryId],
+            function(id, count) { $("#post_view_count").text(count) },
+            function(id, count) { $("#post_comment_count").text(count) })
+</script>
+<a id="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#" onclick="return RefreshPage();">刷新页面</a><a href="https://www.cnblogs.com/chhyan-dream/p/12342020.html#top">返回顶部</a></div>
+    <div id="comment_form_container" style="visibility: visible;"><div class="login_tips">
+    登录后才能查看或发表评论，立即 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return account.login(&#39;!comments&#39;);">登录</a> 或者
+    <a href="https://www.cnblogs.com/">逛逛</a> 博客园首页
+</div>
+</div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+        <div id="cnblogs_ch"><a href="https://www.cnblogs.com/MASA/p/16543600.html" target="_blank" onclick="gtag(&#39;event&#39;, &#39;click&#39;, {&#39;event_category&#39;: &#39;ad&#39;, &#39;event_label&#39;: &#39;T2-MASA&#39;})">【推荐】MASA Framework 开启全新的.NET应用开发体验</a><br><a href="https://brands.cnblogs.com/specdd" target="_blank" onclick="gtag(&#39;event&#39;, &#39;click&#39;, {&#39;event_category&#39;: &#39;ad&#39;, &#39;event_label&#39;: &#39;T2-SpecDD专区&#39;})">【推荐】下一步，敏捷！云可达科技SpecDD敏捷开发专区</a><br><a href="https://curl.qcloud.com/k19RDMHo" target="_blank" onclick="gtag(&#39;event&#39;, &#39;click&#39;, {&#39;event_category&#39;: &#39;ad&#39;, &#39;event_label&#39;: &#39;T2-腾讯云&#39;})">【推荐】腾讯云多款云产品1折起，买云服务器送免费机器</a><br></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="under-post-card">
+            <div id="div-gpt-ad-1592365906576-0" style="width: 300px; height: 250px;" data-google-query-id="CISoudCZ1fkCFcVUvQodq18E7Q"><div id="google_ads_iframe_/1090369/C1_0__container__" style="border: 0pt none;"><iframe id="google_ads_iframe_/1090369/C1_0" name="google_ads_iframe_/1090369/C1_0" title="3rd party ad content" width="300" height="250" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" role="region" aria-label="Advertisement" tabindex="0" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" style="border: 0px; vertical-align: bottom;" data-load-complete="true" data-google-container-id="1" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/saved_resource.html"></iframe></div></div>
+    </div>
+    <div id="under_post_card1"><div class="under-post-card">
+<b>编辑推荐：</b>
+<br>
+
+· <a href="https://www.cnblogs.com/SunSpring/p/16601339.html" target="_blank">.net 温故知新：IOC控制反转，DI依赖注入</a>
+    <br>
+· <a href="https://www.cnblogs.com/wzh2010/p/15730040.html" target="_blank">架构与思维：互联网高性能 Web 架构</a>
+    <br>
+· <a href="https://www.cnblogs.com/xiekun/p/16593204.html" target="_blank">高并发之网络IO模型</a>
+    <br>
+· <a href="https://www.cnblogs.com/InCerry/p/Fast-Enumerate-List.html" target="_blank">.NET 性能优化 - 快速遍历 List 集合</a>
+    <br>
+· <a href="https://www.cnblogs.com/jackyfei/p/16586097.html" target="_blank">在 .NET 6.0 中使用不同的托管模型</a>
+    <br>
+</div></div>
+    <div id="under_post_card2"><div class="itnews under-post-card">
+    <b>最新新闻</b>：
+    <br>
+ ·          <a href="https://news.cnblogs.com/n/726857/" target="_blank">“史上最贵药”！定价1908万元</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/726856/" target="_blank">小米手机二季度出货量降26%，王翔：库存较高但在可控范围</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/726855/" target="_blank">钟南山：到目前为止，没有一个药能够被证实对新冠肺炎有预防作用</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/726854/" target="_blank">NASA公布重返月球计划登陆点，13个候选位置均位于南极附近</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/726853/" target="_blank">你看好人形机器人吗？</a>
+        <br>
+    » <a href="https://news.cnblogs.com/" title="IT 新闻" target="_blank">更多新闻...</a>
+</div></div>
+    <div id="HistoryToday" class="under-post-card"></div>
+    <script type="text/javascript">
+        var commentManager = new blogCommentManager();
+        commentManager.renderComments(0);
+        fixPostBody();
+
+            window.tocManager.displayDisableTocTips = false;
+            window.tocManager.generateToc();
+            
+                setTimeout(function() { countViews(cb_blogId, cb_entryId); }, 50);
+            
+            deliverT2();
+            deliverC1C2();
+            loadNewsAndKb();
+            
+                LoadPostCategoriesTags(cb_blogId, cb_entryId);
+            
+            LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+            GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+            loadOptUnderPost();
+            GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+                </script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+	<div id="sideBar">
+		<div id="sideBarMain">
+			<div id="sidebar_news" class="newsItem"><!--done-->
+<h3 class="catListTitle">公告</h3>
+
+<div id="blog-news">
+    
+    <div id="profile_block">
+        昵称：
+        <a href="https://home.cnblogs.com/u/chhyan-dream/">
+            虎啸千峰
+        </a>
+        <br>
+        园龄：
+        <a href="https://home.cnblogs.com/u/chhyan-dream/" title="入园时间：2017-11-01">
+            4年9个月
+        </a>
+        <br>
+        粉丝：
+        <a class="follower-count" href="https://home.cnblogs.com/u/chhyan-dream/followers/">
+            10
+        </a>
+        <br>
+        关注：
+        <a class="folowing-count" href="https://home.cnblogs.com/u/chhyan-dream/followees/">
+            4
+        </a>
+        <div id="p_b_follow" class="follow-tip">
+<a href="javascript:void(0)" onclick="follow(&#39;c5af6347-a04e-4790-54ee-08d4ef52ecb6&#39;)">+加关注</a></div>
+        <script>getFollowStatus('c5af6347-a04e-4790-54ee-08d4ef52ecb6');</script>
+    </div>
+</div>
+
+</div>
+<div id="sidebar_c3"></div>
+			<div id="blog-calendar" style="">
+
+<table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar" border="0">
+    <tbody>
+        <tr>
+            <td colspan="7">
+                <table class="CalTitle" cellspacing="0" border="0">
+                    <tbody>
+                        <tr>
+                            <td class="CalNextPrev">
+                                <a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2022/07/20&#39;); return false;">&lt;</a>
+                            </td>
+                            <td align="center">2022年8月</td>
+                            <td align="right" class="CalNextPrev">
+                                <a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2022/09/20&#39;); return false;">&gt;</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    <tr>
+        <th class="CalDayHeader" align="center" abbr="日" scope="col">日</th>
+        <th class="CalDayHeader" align="center" abbr="一" scope="col">一</th>
+        <th class="CalDayHeader" align="center" abbr="二" scope="col">二</th>
+        <th class="CalDayHeader" align="center" abbr="三" scope="col">三</th>
+        <th class="CalDayHeader" align="center" abbr="四" scope="col">四</th>
+        <th class="CalDayHeader" align="center" abbr="五" scope="col">五</th>
+        <th class="CalDayHeader" align="center" abbr="六" scope="col">六</th>
+    </tr>
+            <tr>
+                            <td class="CalOtherMonthDay" align="center">31</td>
+                        <td class="" align="center">
+                            1
+                        </td>
+                        <td class="" align="center">
+                            2
+                        </td>
+                        <td class="" align="center">
+                            3
+                        </td>
+                        <td class="" align="center">
+                            4
+                        </td>
+                        <td class="" align="center">
+                            5
+                        </td>
+                    <td class="CalWeekendDay" align="center">
+                        6
+                    </td>
+            </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            7
+                        </td>
+                            <td class="" align="center">
+                                8
+                            </td>
+                            <td class="" align="center">
+                                9
+                            </td>
+                            <td class="" align="center">
+                                10
+                            </td>
+                            <td class="" align="center">
+                                11
+                            </td>
+                            <td class="" align="center">
+                                12
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            13
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            14
+                        </td>
+                            <td class="" align="center">
+                                15
+                            </td>
+                            <td class="" align="center">
+                                16
+                            </td>
+                            <td class="" align="center">
+                                17
+                            </td>
+                            <td class="" align="center">
+                                18
+                            </td>
+                            <td class="" align="center">
+                                19
+                            </td>
+                        <td class="CalTodayDay" align="center">
+                            20
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            21
+                        </td>
+                            <td class="" align="center">
+                                22
+                            </td>
+                            <td class="" align="center">
+                                23
+                            </td>
+                            <td class="" align="center">
+                                24
+                            </td>
+                            <td class="" align="center">
+                                25
+                            </td>
+                            <td class="" align="center">
+                                26
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            27
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            28
+                        </td>
+                            <td class="" align="center">
+                                29
+                            </td>
+                            <td class="" align="center">
+                                30
+                            </td>
+                            <td class="" align="center">
+                                31
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                1
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                2
+                            </td>
+                        <td class="CalOtherMonthDay" align="center">
+                            3
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalOtherMonthDay" align="center">
+                            4
+                        </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                5
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                6
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                7
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                8
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                9
+                            </td>
+                        <td class="CalOtherMonthDay" align="center">
+                            10
+                        </td>
+                </tr>
+    </tbody>
+</table></div><script>loadBlogDefaultCalendar();</script>			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><!-- 搜索 -->
+<div id="sidebar_search" class="sidebar-block">
+    <div id="sidebar_search" class="mySearch">
+        <h3 class="catListTitle">搜索</h3>
+        <div id="sidebar_search_box">
+            <div id="widget_my_zzk" class="div_my_zzk">
+                <input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk">
+            </div>
+            <div id="widget_my_google" class="div_my_zzk">
+                <input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 常用链接 -->
+<div id="sidebar_shortcut" class="sidebar-block"><div class="catListLink">
+<h3 class="catListTitle">
+常用链接
+</h3>
+<ul>
+    <li><a href="https://www.cnblogs.com/chhyan-dream/p/" title="我的博客的随笔列表">我的随笔</a></li>
+<li><a href="https://www.cnblogs.com/chhyan-dream/MyComments.html" title="我的发表过的评论列表">我的评论</a></li>
+<li><a href="https://www.cnblogs.com/chhyan-dream/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li>
+<li><a href="https://www.cnblogs.com/chhyan-dream/comments" title="我的博客的评论列表">最新评论</a></li>
+<li><a href="https://www.cnblogs.com/chhyan-dream/tag/" title="我的博客的标签列表">我的标签</a></li>
+
+</ul>
+</div>
+
+</div>
+
+<!-- 最新随笔 -->
+
+
+<!-- 我的标签 -->
+<div id="sidebar_toptags" class="sidebar-block"></div>
+
+<!-- 积分与排名 -->
+
+
+<!-- 随笔分类、随笔档案、文章分类、新闻分类、相册、链接 -->
+<div id="sidebar_categories">
+
+    <div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+        <h3 class="catListTitle">
+            
+    <a class="sidebar-card-title-a" href="https://www.cnblogs.com/chhyan-dream/categories">随笔分类</a>
+
+
+
+        </h3>
+
+        <ul>
+
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/2064046.html" class="category-item-link" rel="" target="">CDP、HDP以及EMR大数据平台(10)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1646491.html" class="category-item-link" rel="" target="">DataX(5)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1610780.html" class="category-item-link" rel="" target="">Hadoop(4)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1616124.html" class="category-item-link" rel="" target="">Hive(7)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1915866.html" class="category-item-link" rel="" target="">Hplsql(3)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1444862.html" class="category-item-link" rel="" target="">Java的API(8)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1452498.html" class="category-item-link" rel="" target="">Java的API之文件类(2)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1453229.html" class="category-item-link" rel="" target="">Java调试和调优(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1437163.html" class="category-item-link" rel="" target="">JAVA基础(6)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1441267.html" class="category-item-link" rel="" target="">Java面向对象(3)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1440912.html" class="category-item-link" rel="" target="">Java中常用的几个关键字系列介绍(4)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1868288.html" class="category-item-link" rel="" target="">JVM(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1610029.html" class="category-item-link" rel="" target="">Linux(7)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1651939.html" class="category-item-link" rel="" target="">MongoDB(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1646490.html" class="category-item-link" rel="" target="">Mysql(2)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1627672.html" class="category-item-link" rel="" target="">Oracle(4)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1610027.html" class="category-item-link" rel="" target="">Spark(16)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1471977.html" class="category-item-link" rel="" target="">Spring框架(2)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1760531.html" class="category-item-link" rel="" target="">TDH和CDH大数据平台(7)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1463310.html" class="category-item-link" rel="" target="">Web基础(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/category/1613198.html" class="category-item-link" rel="" target="">代码管理工具(3)</a>
+ 
+                </li>                
+            <li>
+                <a href="javascript:void(0)" onclick="sideColumnManager.loadMore(this)">更多</a>
+            </li>
+        </ul>
+
+
+    </div>    
+    <div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+        <h3 class="catListTitle">
+            
+随笔档案
+
+
+        </h3>
+
+        <ul>
+
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2022/05.html" class="category-item-link" rel="" target="">2022年5月(5)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2022/02.html" class="category-item-link" rel="" target="">2022年2月(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2021/12.html" class="category-item-link" rel="" target="">2021年12月(7)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2021/11.html" class="category-item-link" rel="" target="">2021年11月(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2021/10.html" class="category-item-link" rel="" target="">2021年10月(2)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2021/09.html" class="category-item-link" rel="" target="">2021年9月(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2021/08.html" class="category-item-link" rel="" target="">2021年8月(2)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2021/07.html" class="category-item-link" rel="" target="">2021年7月(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2021/03.html" class="category-item-link" rel="" target="">2021年3月(2)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2021/01.html" class="category-item-link" rel="" target="">2021年1月(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2020/10.html" class="category-item-link" rel="" target="">2020年10月(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2020/08.html" class="category-item-link" rel="" target="">2020年8月(10)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2020/07.html" class="category-item-link" rel="" target="">2020年7月(6)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2020/06.html" class="category-item-link" rel="" target="">2020年6月(6)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2020/05.html" class="category-item-link" rel="" target="">2020年5月(3)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2020/04.html" class="category-item-link" rel="" target="">2020年4月(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2020/02.html" class="category-item-link" rel="" target="">2020年2月(5)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2020/01.html" class="category-item-link" rel="" target="">2020年1月(6)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2019/12.html" class="category-item-link" rel="" target="">2019年12月(8)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2019/07.html" class="category-item-link" rel="" target="">2019年7月(1)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2019/05.html" class="category-item-link" rel="" target="">2019年5月(2)</a>
+ 
+                </li>                
+                <li data-category-list-item-visible="false" style="display: none">
+                    
+<a href="https://www.cnblogs.com/chhyan-dream/archive/2019/04.html" class="category-item-link" rel="" target="">2019年4月(23)</a>
+ 
+                </li>                
+            <li>
+                <a href="javascript:void(0)" onclick="sideColumnManager.loadMore(this)">更多</a>
+            </li>
+        </ul>
+
+
+    </div>    
+</div>
+
+<!-- 最新评论 -->
+<!-- 阅读排行榜 -->
+<div id="sidebar_topviewedposts" class="sidebar-block"><div class="catListView">
+    <h3 class="catListTitle">
+        <a href="https://www.cnblogs.com/chhyan-dream/most-viewed" class="sidebar-card-title-a">
+    阅读排行榜
+</a>
+
+    </h3>
+    <div id="TopViewPostsBlock">
+        <ul style="word-break:break-all">
+                    <li>
+                        <a href="https://www.cnblogs.com/chhyan-dream/p/10685878.html">
+                            1. JAVA中final关键字的作用(116960)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/chhyan-dream/p/13442628.html">
+                            2. Kerberos的keytab文件生成和登录(16688)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/chhyan-dream/p/12158506.html">
+                            3. 如何将dmp文件导入到Oracle(13166)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/chhyan-dream/p/10786043.html">
+                            4. Java多线程的应用(10603)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/chhyan-dream/p/10739860.html">
+                            5. Java中的日期表示类(9368)
+                        </a>
+                    </li>
+        </ul>
+    </div>
+</div></div>
+
+<!-- 评论排行榜 -->
+<div id="sidebar_topcommentedposts" class="sidebar-block"><div class="catListFeedback">
+    <h3 class="catListTitle">
+        <a href="https://www.cnblogs.com/chhyan-dream/most-commented" class="sidebar-card-title-a">评论排行榜</a>
+
+    </h3>
+    <div id="TopFeedbackPostsBlock">
+        <ul style="word-break:break-all">
+                    <li>
+                        <a href="https://www.cnblogs.com/chhyan-dream/p/10685878.html">
+                            1. JAVA中final关键字的作用(7)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/chhyan-dream/p/12929362.html">
+                            2. DataX向写入到HDFS文件时报权限错误(1)
+                        </a>
+                    </li>
+        </ul>
+    </div>
+</div></div>
+
+<!-- 推荐排行榜 -->
+<div id="sidebar_topdiggedposts" class="sidebar-block">
+<div id="topdigg_posts_wrap">
+    <div class="catListView">
+        <h3 class="catListTitle">
+            <a href="https://www.cnblogs.com/chhyan-dream/most-liked" class="sidebar-card-title-a">推荐排行榜</a>
+
+        </h3>
+        <div id="TopDiggPostsBlock">
+            <ul style="word-break: break-all">
+                        <li>
+                            <a href="https://www.cnblogs.com/chhyan-dream/p/10685878.html">
+                                1. JAVA中final关键字的作用(18)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/chhyan-dream/p/13442628.html">
+                                2. Kerberos的keytab文件生成和登录(2)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/chhyan-dream/p/10786043.html">
+                                3. Java多线程的应用(2)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/chhyan-dream/p/13470523.html">
+                                4. Spark运行CDH6.3.2碰到的由于hive驱动引起的问题解决方法(1)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/chhyan-dream/p/12013463.html">
+                                5. Spark的任务提交和执行流程概述(1)
+                            </a>
+                        </li>
+            </ul>
+        </div>
+    </div>
+</div></div><div id="sidebar_recentcomments" class="sidebar-block"><div class="catListComment">
+<h3 class="catListTitle"><a href="https://www.cnblogs.com/chhyan-dream/comments" class="sidebar-card-title-a">最新评论</a></h3>
+    <div class="RecentCommentBlock">
+        <ul>
+                <li class="recent_comment_title"><a href="https://www.cnblogs.com/chhyan-dream/p/10685878.html">1. Re:JAVA中final关键字的作用</a></li>
+                <li class="recent_comment_body"><p>断子绝孙类 红红火火恍恍惚惚</p>
+</li>
+                <li class="recent_comment_author">--菜鸟qiz</li>
+                <li class="recent_comment_title"><a href="https://www.cnblogs.com/chhyan-dream/p/12929362.html">2. Re:DataX向写入到HDFS文件时报权限错误</a></li>
+                <li class="recent_comment_body"><p>解决方案的第二条中，需要配置hdfsUser，这个具体是怎么配置？是在datax的writer的参数中，添加一个“hdfsUser”的参数吗？这个参数的值，在hadoop中如何获取？</p>
+</li>
+                <li class="recent_comment_author">--very_01</li>
+                <li class="recent_comment_title"><a href="https://www.cnblogs.com/chhyan-dream/p/10685878.html">3. Re:JAVA中final关键字的作用</a></li>
+                <li class="recent_comment_body"><p>断子绝孙类。。。还好C++没有这么可怕的东西</p>
+</li>
+                <li class="recent_comment_author">--Xrst</li>
+                <li class="recent_comment_title"><a href="https://www.cnblogs.com/chhyan-dream/p/10685878.html">4. Re:JAVA中final关键字的作用</a></li>
+                <li class="recent_comment_body"><p>至于final 方法和类, 都只是影响到了覆盖和继承过程！好理解没啥异议</p>
+</li>
+                <li class="recent_comment_author">--linuxdog</li>
+                <li class="recent_comment_title"><a href="https://www.cnblogs.com/chhyan-dream/p/10685878.html">5. Re:JAVA中final关键字的作用</a></li>
+                <li class="recent_comment_body"><p>基本数据类型, 基本上变量名字本身就是数据不需要引用(索引)数据的过程，　所以final一次就定死了！</p>
+</li>
+                <li class="recent_comment_author">--linuxdog</li>
+        </ul>
+    </div>
+</div>
+
+</div>
+
+
+</div>
+                    <script>loadBlogSideColumn();</script>
+			</div>			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright © 2022 虎啸千峰
+<br><span id="poweredby">Powered by .NET 6 on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+
+
+
+<input type="hidden" id="antiforgery_token" value="CfDJ8EOBBtWq0dNFoDS-ZHPSe50JOFPdQW-GvnCR1PuAc41_ZmAQzdjoIHgDIItXSIwKkxjAYseDHLK43nMmkNL4u5Obj4qtaW6q73UsQM3ftbkj2DofkJRjfb49WoOY0XekUJpZxswKfZLerfi8XTb7LVA">
+<script async="" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/js"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    var kv = getGACustom();
+    if (kv) {
+        gtag('set', kv);
+    }
+    gtag('config', 'UA-476124-1');
+</script>
+<script defer="" src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/hm.js.下载"></script><iframe src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/container.html" style="visibility: hidden; display: none;"></iframe>
+
+<iframe src="./MongoDB分片技术原理和高可用集群配置方案 - 虎啸千峰 - 博客园_files/aframe.html" width="0" height="0" style="display: none;"></iframe></body></html>

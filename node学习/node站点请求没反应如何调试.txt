@@ -1,0 +1,15 @@
+1.npm start ,查看代码是否报错；
+2.用chrome调试app.js，看代码是否有遗漏，整个流程是否跑通【如何调试本地Nodejs.txt文件】
+3.npm start ,启动访问对应的浏览器地址，例如http://localhost:10129/recomment/index，查看页面的网络反馈，只要存在html文件，那就是node端的路由时没问题，正常访问到了那个页面
+	3.1那接下来就是再那个页面对应的controller中打debugger，调试页面的代码逻辑问题
+
+4.如果访问页面网络反馈的时404，啥都没有，这个时最难办的，错误可能时url不对；更糟糕的可能时app.js文件中执行的流程有疏漏，
+  但不管怎么样，只要host和端口没错，浏览器中输入任意地址，例如http://localhost:10129/recommend/list
+ 都会经过如下流程：【所以首先看是否使用了rout中间件，没用的话，压根就没路由，没法执行到controller，反馈肯定是404】
+		1.middleware插件之前注册过，所以每个middleware插件都会执行：这个是核心，网站的页面渲染，缓存，保护，所有的业务和安全，全在这个里面执行
+		2.如果middleware插件中用了route插件，就实现了路由功能，不管输入的网址对不对，都会执行如下流程
+			1. *controller函数
+			2. 对应的controller函数【一般这个函数里肯定会有render的调用】
+			3. 因为上一步调用了render，所以会进入*render
+			4. *render里面调用了view，view里面执行具体的页面内容设置，包括body，请求头，等信息
+
